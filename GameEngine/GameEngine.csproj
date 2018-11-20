@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8A2AF4C4-1403-4BE2-9272-81666DC6AC5D}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>GameEngine</RootNamespace>
     <AssemblyName>GameEngine</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -64,6 +64,10 @@
     <Compile Include="Event\WidgetEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource\FontManager.cs" />
+    <Compile Include="Resource\ResourceHolder.cs" />
+    <Compile Include="Resource\SoundBufferManager.cs" />
+    <Compile Include="Resource\TextureManager.cs" />
     <Compile Include="States\StateMachine\StateBase.cs" />
     <Compile Include="States\StateMachine\StateMachine.cs" />
     <Compile Include="States\StatePlaying.cs" />

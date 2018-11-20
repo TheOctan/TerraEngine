@@ -1,5 +1,5 @@
 ﻿using GameEngine.Event;
-
+using GameEngine.Resource;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -14,7 +14,21 @@ namespace GameEngine.GUI
 {
     public abstract class Widget : Transformable, Drawable
     {
-        public Widget()
+        public enum WidgetState
+        {
+            notActive = 0,
+            active,
+            selected,
+            warning
+        };                                                                     // final
+        public enum WidgetSize
+        {
+            Narrow = 0,
+            Small,
+            Wide
+        };                                                                      // final
+
+        public Widget(WidgetSize size)
         {
             #region Subscribing
 
@@ -27,94 +41,126 @@ namespace GameEngine.GUI
             #endregion
 
 
-            gloabalMousePos = new Vector2f(0, 0);
+
             state = WidgetState.active;
-            dimensions = new float[]
-            {
-                88f,
-                192f,
-                400f
-            };
-
+            gloabalMousePos = new Vector2f(0, 0);
+            localMousePos = new Vector2f(0, 0);
+            rect = new RectangleShape();
+            text = new Text();
+            isActive = true;
+            isClicked = false;
+            isEntered = false; ;
             outlineThickness = -2;
+
+            rect.Size = new Vector2f(dimensions[(int)size], 40);
+            rect.FillColor = new Color(52, 152, 219);
+            rect.OutlineColor = Color.Black;
+            rect.OutlineThickness = outlineThickness;
+
+            text.CharacterSize = 25;
+            text.Color = Color.White;
+            text.Font = ResourceHolder.Fonts.Get("minecraft");
         }
 
-        private void Window_MouseMoved(object sender, MouseMoveEventArgs e)
+        public string Text
         {
-            gloabalMousePos = new Vector2f(e.X, e.Y);
-            isEntered = rect.GetGlobalBounds().Contains(localMousePos.X, localMousePos.Y);
-
-            if(isEntered)
+            get => text.DisplayedString;
+            set
             {
-                if (isClicked)
-                    state = WidgetState.notActive;
-                else
-                    state = WidgetState.selected;
-            }
-            else
-            {
-                state = WidgetState.active;
-            }
-        }
-        private void Window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
-        {
-            if(e.Button == Mouse.Button.Left)
-            {
-                if(isEntered)
-                {
-                    state = WidgetState.notActive;
-                    isClicked = true;
-                }
+                text.DisplayedString = value;
+                UpdateText();
             }
         }
-        private void Window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        public virtual Texture Texture
         {
-            if(e.Button == Mouse.Button.Left)
+            get => rect.Texture;
+            set
             {
-                if(isEntered && isClicked)
-                {
-                    state = WidgetState.selected;
-                }
-
-                isClicked = false;
+                Reset();
+                rect.Texture = value;
+                UpdateState();
             }
         }
-        private void Window_KeyPressed(object sender, KeyEventArgs e)
+        //public abstract int Value { get; set; }
+        public bool IsActive
         {
-            throw new NotImplementedException();
+            get => isActive;
+            set
+            {
+                isActive = value;
+                state = isActive ? WidgetState.active : WidgetState.notActive;
+                UpdateState();
+            }
         }
-        private void Window_TextEntered(object sender, TextEventArgs e)
+        public Vector2f Size
         {
-            throw new NotImplementedException();
+            get         => rect.Size; 
+            private set => rect.Size = value;
         }
 
-        public virtual Texture Texture { private get; set; }
-        public abstract int Value { get; set; }
-        public String Text { get; set; }
-        public bool Active { get; set; }
-        public Vector2f Size {
-            get         { return rect.Size; }
-            private set { rect.Size = value; }
+        public void Update()
+        {
+            UpdateState();
         }
 
-        public FloatRect getLocalBounds()
+        public FloatRect GetLocalBounds()
         {
             return rect.GetLocalBounds();
         }                                                           // final
-        public FloatRect getGlobalBounds()
+        public FloatRect GetGlobalBounds()
         {
-            return Transform.TransformRect(getLocalBounds());
+            return Transform.TransformRect(GetLocalBounds());
         }                                                          // final
+
+        public void Draw(RenderTarget target, RenderStates states)
+        {
+            states.Transform *= Transform;
+            localMousePos = states.Transform.GetInverse().TransformPoint(gloabalMousePos);
+
+            target.Draw(rect, states);
+            DrawResource(target, states);
+            target.Draw(text, states);
+        }
+
+        protected void DrawResource(RenderTarget target, RenderStates states)
+        {
+        }
+
+        protected virtual void Window_MouseMoved(object sender, MouseMoveEventArgs e)
+        {
+            gloabalMousePos = new Vector2f(e.X, e.Y);
+            isEntered = rect.GetGlobalBounds().Contains(localMousePos.X, localMousePos.Y);
+        }
+        protected virtual void Window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+        }
+        protected virtual void Window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        {
+        }
+        protected virtual void Window_KeyPressed(object sender, KeyEventArgs e)
+        {
+        }
+        protected virtual void Window_TextEntered(object sender, TextEventArgs e)
+        {
+        }
 
         protected virtual void Reset()
         {
-            throw new NotImplementedException();
+            rect.FillColor = Color.White;
+            //rect.OutlineColor = Color.Transparent;
+            //rect.OutlineThickness = 0;
         }
-        protected abstract void UpdteText();
-        protected void UpdateState()
+        protected virtual void UpdateState()
         {
-            throw new NotImplementedException();
+            switch (state)
+            {
+                case WidgetState.notActive:     NotActiveState();   break;
+                case WidgetState.active:        ActiveState();      break;
+                case WidgetState.selected:      SelectedState();    break;
+                case WidgetState.warning:       WarningState();     break;
+            }
         }
+        protected abstract void UpdateText();
 
         protected virtual void NotActiveState()
         {
@@ -133,30 +179,8 @@ namespace GameEngine.GUI
             throw new NotImplementedException();
         }
 
-        public void Draw(RenderTarget target, RenderStates states)
-        {
-            states.Transform *= Transform;
-            localMousePos = states.Transform.GetInverse().TransformPoint(gloabalMousePos);
 
-
-            target.Draw(rect, states);
-            // draw() resources
-            target.Draw(text, states);
-        }
-
-        public enum WidgetState
-        {
-            notActive = 0,
-            active,
-            selected,
-            warning
-        };                                                                     // final
-        public enum WidgetSize
-        {
-            Narrow = 0,
-            Small,
-            Wide
-        };                                                                      // final
+        public abstract event EventHandler<WidgetEventArgs>  WidgetEvent;
 
         protected Vector2f          localMousePos;                                                     // final
         protected Vector2f          gloabalMousePos;                                                   // final
@@ -164,17 +188,21 @@ namespace GameEngine.GUI
         protected Text              text;                                                              // final
 
         protected WidgetState       state;
+        //public event EventHandler                   MouseEntered;
+        //public event EventHandler                   MouseLeft;
 
         protected bool isActive;
         protected bool isClicked;
         protected bool isEntered;
 
-        float[] dimensions;
+        readonly float[] dimensions = new float[]
+        {
+            88f,
+            192f,
+            400f
+        };
 
         protected float outlineThickness;
 
-        public event EventHandler<WidgetEventArgs>  WidgetClicked;
-        //public event EventHandler                   MouseEntered;
-        //public event EventHandler                   MouseLeft;
     }
 }

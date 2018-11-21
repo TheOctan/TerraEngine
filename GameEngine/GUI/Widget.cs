@@ -45,21 +45,25 @@ namespace GameEngine.GUI
             state = WidgetState.active;
             gloabalMousePos = new Vector2f(0, 0);
             localMousePos = new Vector2f(0, 0);
-            rect = new RectangleShape();
-            text = new Text();
             isActive = true;
             isClicked = false;
             isEntered = false; ;
             outlineThickness = -2;
 
-            rect.Size = new Vector2f(dimensions[(int)size], 40);
-            rect.FillColor = new Color(52, 152, 219);
-            rect.OutlineColor = Color.Black;
-            rect.OutlineThickness = outlineThickness;
+            rect = new RectangleShape()
+            {
+                Size = new Vector2f(dimensions[(int)size], 40),
+                FillColor = new Color(52, 152, 219),
+                OutlineColor = Color.Black,
+                OutlineThickness = outlineThickness
+            };
 
-            text.CharacterSize = 25;
-            text.Color = Color.White;
-            text.Font = ResourceHolder.Fonts.Get("minecraft");
+            text = new Text()
+            {
+                CharacterSize = 25,
+                Color = Color.White,
+                Font = ResourceHolder.Fonts.Get("minecraft")
+            };
         }
 
         public string Text
@@ -122,7 +126,7 @@ namespace GameEngine.GUI
             target.Draw(text, states);
         }
 
-        protected void DrawResource(RenderTarget target, RenderStates states)
+        protected virtual void DrawResource(RenderTarget target, RenderStates states)
         {
         }
 

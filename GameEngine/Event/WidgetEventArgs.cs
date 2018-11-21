@@ -15,7 +15,7 @@ namespace GameEngine.Event
             IsActive = e.IsActive;
         }
 
-        public String   Message;
+        public string   Message;
         public int      Value;
         public bool     IsActive;
     }

@@ -66,7 +66,7 @@ namespace GameEngine.GUI
             };
         }
 
-        public string Text
+        public virtual string Text
         {
             get => text.DisplayedString;
             set
@@ -199,7 +199,7 @@ namespace GameEngine.GUI
         protected bool isClicked;
         protected bool isEntered;
 
-        readonly float[] dimensions = new float[]
+        protected readonly float[] dimensions = new float[]
         {
             88f,
             192f,

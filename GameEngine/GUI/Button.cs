@@ -59,7 +59,7 @@ namespace GameEngine.GUI
                 {
                     state = WidgetState.selected;
 
-                    WidgetEvent(this, new WidgetEventArgs(new WidgetEvent() { IsActive = isActive }));
+                    WidgetEvent(this, new WidgetEventArgs("", 0, isActive));
                 }
 
                 isClicked = false;

@@ -107,6 +107,7 @@ namespace GameEngine.GUI
                 if (isEntered && isClicked)
                 {
                     state = WidgetState.selected;
+                    WidgetEvent(this, new WidgetEventArgs("", value, isActive));
                 }
 
                 isClicked = false;

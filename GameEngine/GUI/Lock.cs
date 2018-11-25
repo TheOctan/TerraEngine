@@ -75,13 +75,7 @@ namespace GameEngine.GUI
                 {
                     IsLocked = IsLocked ? false : true;
 
-                    WidgetEvent(this,
-                        new WidgetEventArgs(
-                            new WidgetEvent()
-                            {
-                                Value = Convert.ToInt32(IsLocked),
-                                IsActive = isActive
-                            }));
+                    WidgetEvent(this, new WidgetEventArgs("", Convert.ToInt32(IsLocked), isActive));
                 }
             }
         }

@@ -48,11 +48,7 @@ namespace GameEngine.GUI
                 if(state == WidgetState.selected)
                 {
                     state = WidgetState.active;
-                    WidgetEvent(this, new WidgetEventArgs(new WidgetEvent()
-                    {
-                        Message = modString.ToString(),
-                        IsActive = isActive
-                    }));
+                    WidgetEvent(this, new WidgetEventArgs(modString.ToString(), 0, isActive));
                 }
         }
         protected override void Window_TextEntered(object sender, TextEventArgs e)

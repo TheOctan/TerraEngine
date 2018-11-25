@@ -28,9 +28,8 @@ namespace GameEngine.Resource
             {
                 Add(name);
             }
-            Resources.TryGetValue(name, out var font);
 
-            return font;
+            return Resources[name];
         }
         public bool Exist(string name)
         {

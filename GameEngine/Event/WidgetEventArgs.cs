@@ -8,11 +8,11 @@ namespace GameEngine.Event
 {
     public class WidgetEventArgs : EventArgs
     {
-        public WidgetEventArgs(WidgetEvent e)
+        public WidgetEventArgs(string message, int value, bool isActive)
         {
-            Message = e.Message;
-            Value = e.Value;
-            IsActive = e.IsActive;
+            Message     = message;
+            Value       = value;
+            IsActive    = isActive;
         }
 
         public string   Message;

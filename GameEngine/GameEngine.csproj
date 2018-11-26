@@ -57,9 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Event\WidgetEvent.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GUI\Button.cs" />
+    <Compile Include="GUI\Lock.cs" />
+    <Compile Include="GUI\ScrollBar.cs" />
+    <Compile Include="GUI\StackMenu.cs" />
+    <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\Widget.cs" />
     <Compile Include="Event\WidgetEventArgs.cs" />
     <Compile Include="Program.cs" />
@@ -68,9 +71,11 @@
     <Compile Include="Resource\ResourceHolder.cs" />
     <Compile Include="Resource\SoundBufferManager.cs" />
     <Compile Include="Resource\TextureManager.cs" />
+    <Compile Include="States\MainMenuState.cs" />
     <Compile Include="States\StateMachine\StateBase.cs" />
     <Compile Include="States\StateMachine\StateMachine.cs" />
     <Compile Include="States\StatePlaying.cs" />
+    <Compile Include="Util\FPSCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

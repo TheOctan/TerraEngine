@@ -1,5 +1,6 @@
 ﻿using GameEngine.States;
 using GameEngine.States.StateMachine;
+using GameEngine.Util;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -13,16 +14,23 @@ namespace GameEngine
 {
     public class Game
     {
+        public static RenderWindow Window { get; private set; }
+        public static StateMachine Machine { get; private set; }
+
+        private FPSCounter counter;
+
         public Game()
         {
             Machine = new StateMachine();
-            Window = new RenderWindow(new VideoMode(640, 480), "Game Engine");
+            Window = new RenderWindow(new VideoMode(1300, 650), "Game Engine");
             Window.SetFramerateLimit(60);
 
             Window.Closed += Window_Closed;
             Window.Resized += Window_Resized;
 
-            Machine.PushState(new StatePlaying(this));
+            counter = new FPSCounter();
+
+            Machine.PushState(new MainMenuState(this));
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -45,17 +53,21 @@ namespace GameEngine
             var lastTime    = Time.Zero;
             var accumulator = Time.Zero;
 
-            while (Window.IsOpen)
+            while (Window.IsOpen && !Machine.Empty)
             {
                 var state = Machine.GetCurrentState();
 
                 // get times
-                var time = timer.ElapsedTime;
-                var frameTime = time - lastTime;
+                var time        = timer.ElapsedTime;
+                var frameTime   = time - lastTime;
                 if (frameTime > Time.FromSeconds(0.25f)) frameTime = Time.FromSeconds(0.25f);
+
+                lastTime = time;
+                accumulator += frameTime;
 
                 // real time update
                 state.HandleInput();
+                counter.Update();
 
                 while (accumulator >= dt)
                 {
@@ -72,14 +84,12 @@ namespace GameEngine
                 // render
                 Window.Clear(Color.Black);
                 state.Render(interpolation);
+                Window.Draw(counter);
                 Window.Display();
 
                 Window.DispatchEvents();
                 Machine.TryPop();
             }
         }
-
-        public static RenderWindow Window { get; set; }
-        public StateMachine Machine { get; set; }
     }
 }

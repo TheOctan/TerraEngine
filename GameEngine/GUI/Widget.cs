@@ -32,22 +32,22 @@ namespace GameEngine.GUI
         {
             #region Subscribing
 
-            Program.window.MouseMoved += Window_MouseMoved;
-            Program.window.MouseButtonPressed += Window_MouseButtonPressed;
-            Program.window.MouseButtonReleased += Window_MouseButtonReleased;
-            Program.window.KeyPressed += Window_KeyPressed;
-            Program.window.TextEntered += Window_TextEntered;
+            Game.Window.MouseMoved += Window_MouseMoved;
+            Game.Window.MouseButtonPressed += Window_MouseButtonPressed;
+            Game.Window.MouseButtonReleased += Window_MouseButtonReleased;
+            Game.Window.KeyPressed += Window_KeyPressed;
+            Game.Window.TextEntered += Window_TextEntered;
 
             #endregion
 
 
 
             state = WidgetState.active;
-            gloabalMousePos = new Vector2f(0, 0);
-            localMousePos = new Vector2f(0, 0);
+            gloabalMousePos = new Vector2f(-1, 0);
+            localMousePos = new Vector2f(-1, 0);
             isActive = true;
             isClicked = false;
-            isEntered = false; ;
+            isEntered = false;
             outlineThickness = -2;
 
             rect = new RectangleShape()

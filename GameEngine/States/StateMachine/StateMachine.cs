@@ -8,6 +8,8 @@ namespace GameEngine.States.StateMachine
 {
     public class StateMachine
     {
+        public bool Empty => states.Count == 0;
+
         public StateMachine()
         {
             states = new Stack<StateBase>();
@@ -15,7 +17,7 @@ namespace GameEngine.States.StateMachine
 
         public void PushState(StateBase state)
         {
-            if (!Empty()) states.Peek().Pause();
+            if (!Empty) states.Peek().Pause();
             states.Push(state);
             states.Peek().Init();
         }
@@ -34,10 +36,6 @@ namespace GameEngine.States.StateMachine
             return states.Peek();
         }
 
-        public bool Empty()
-        {
-            return states.Count == 0;
-        }
         public void Reset()
         {
             shouldReset = true;
@@ -49,14 +47,14 @@ namespace GameEngine.States.StateMachine
                 states.Clear();
                 return;
             }
-            if(shouldPop && !Empty())
+            if(shouldPop && !Empty)
             {
                 states.Pop();
-                if (!Empty()) states.Peek().Resume();
+                if (!Empty) states.Peek().Resume();
 
                 shouldPop = false;
             }
-            if(shouldChange && !Empty())
+            if(shouldChange && !Empty)
             {
                 states.Pop();
                 states.Push(change);

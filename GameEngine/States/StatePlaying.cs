@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GameEngine.States
 {
-    class StatePlaying : StateBase
+    public class StatePlaying : StateBase
     {
         public StatePlaying(Game game) : base(game)
         {

@@ -1,4 +1,5 @@
-﻿using SFML.System;
+﻿using GameEngine.Core;
+using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace GameEngine.States.StateMachine
     {
         public StateBase(Game game)
         {
-            Game = game;
+            this.game = game;
         }
 
         public abstract void Init();
@@ -24,6 +25,6 @@ namespace GameEngine.States.StateMachine
         public virtual void Pause() { }
         public virtual void Resume() { }
 
-        protected Game Game { get; set; }
+        protected Game game { get; set; }
     }
 }

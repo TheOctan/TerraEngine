@@ -1,4 +1,5 @@
-﻿using GameEngine.GUI;
+﻿using GameEngine.Core;
+using GameEngine.GUI;
 using GameEngine.Resource;
 using GameEngine.States.StateMachine;
 using SFML.Graphics;
@@ -63,13 +64,13 @@ namespace GameEngine.States
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            Game.Machine.ChangeState(new StatePlaying(Game));
+            Game.Machine.ChangeState(new StatePlaying(game));
         }
 
         private void Button2_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
             //Console.WriteLine("Add Settings");
-            Game.Machine.PushState(new SettingState(Game));
+            Game.Machine.PushState(new SettingState(game));
         }
 
         private void Button3_WidgetEvent(object sender, Event.WidgetEventArgs e)

@@ -16,20 +16,22 @@ namespace GameEngine.Core
     {
         public static RenderWindow Window { get; set; }
         public static StateMachine Machine { get; private set; }
+
         public static readonly string GameName = "\nterraria demo_0.0.5";
+        public static bool VisibleCounter = false;
 
         public Settings settings;
         private FPSCounter counter;
-        
 
         public Game()
         {
             Machine = new StateMachine();
-            Window = new RenderWindow(VideoMode.DesktopMode, GameName, Styles.Default);
+            Window = new RenderWindow(VideoMode.DesktopMode, GameName, Styles.Fullscreen);
             Window.SetFramerateLimit(60);
 
             Window.Closed += Window_Closed;
             Window.Resized += Window_Resized;
+            Window.KeyPressed += Window_KeyPressed;
 
             counter = new FPSCounter();
             counter.Text = GameName;
@@ -38,10 +40,18 @@ namespace GameEngine.Core
             {
                 Music = 100,
                 Value = 100,
-                FullScreen = false
+                FullScreen = true
             };
 
             Machine.PushState(new MainMenuState(this));
+        }
+
+        private void Window_KeyPressed(object sender, KeyEventArgs e)
+        {
+            if(e.Code == Keyboard.Key.Tab)
+            {
+                VisibleCounter = VisibleCounter ? false : true;
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -96,7 +106,8 @@ namespace GameEngine.Core
                 // render
                 Window.Clear(Color.Black);
                 state.Render(interpolation);
-                Window.Draw(counter);
+                if (VisibleCounter)
+                    Window.Draw(counter);
                 Window.Display();
 
                 Window.DispatchEvents();

@@ -12,10 +12,9 @@ namespace GameEngine.Util
     public class FPSCounter : Drawable
     {
         public int Count => (int)fps;
-        public string Text { get => str; set => str = value; }
+        public string Text { get; set; }
 
         private Text text;
-        private string str;
 
         private Clock delayTimer;
         private Clock fpsTimer;
@@ -51,7 +50,7 @@ namespace GameEngine.Util
                 delayTimer.Restart();
             }
 
-            text.DisplayedString = "FPS " + ((int)fps).ToString() + "\tgravity engine v_0.0.5\n" + str;
+            text.DisplayedString = "FPS " + ((int)fps).ToString() + Text;
         }
 
         public void Draw(RenderTarget target, RenderStates states)

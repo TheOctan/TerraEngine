@@ -1,5 +1,7 @@
 ﻿using GameEngine.GUI;
+using GameEngine.Resource;
 using GameEngine.States.StateMachine;
+using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
@@ -12,11 +14,15 @@ namespace GameEngine.States
 {
     public class MainMenuState : StateBase
     {
+        private RectangleShape background;
         private StackMenu menu;
+
+        Button button1;
+        Button button2;
+        Button button3;
 
         public MainMenuState(Game game) : base(game)
         {
-            menu = new StackMenu();
             Game.Window.Resized += Window_Resized;
         }
 
@@ -26,38 +32,55 @@ namespace GameEngine.States
 
         public override void Init()
         {
+            background = new RectangleShape();
+            background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
+            background.Texture = ResourceHolder.Textures.Get("Background/orig");
+
+            button1 = new Button("Start Game");
+            button1.Texture = ResourceHolder.Textures.Get("Widget/button");
+            button1.WidgetEvent += Button1_WidgetEvent;
+
+            button2 = new Button("Settings");
+            button2.Texture = ResourceHolder.Textures.Get("Widget/button");
+            button2.WidgetEvent += Button2_WidgetEvent;
+
+            button3 = new Button("Exit");
+            button3.Texture = ResourceHolder.Textures.Get("Widget/button");
+            button3.WidgetEvent += Button3_WidgetEvent;
+
+            menu = new StackMenu();
             menu.Title = "Main menu";
+            menu.Texture = ResourceHolder.Textures.Get("Widget/demo_background");
+            menu.FillColor = new Color(0, 0, 0, 150);
 
-            menu.AddWidget(new Lock("Full Screen Mode"));
-            menu.AddWidget(new ScrollBar("Sound", 1, 10), true);
-            menu.AddWidget(new Button("Button 1", Widget.WidgetSize.Small), true);
+            menu.AddWidget(button1);
+            menu.AddWidget(button2);
+            menu.AddWidget(button3);
 
-            menu.AddWidget(new TextBox("Text_0"));
-            menu.AddWidget(new Button("Button 2", Widget.WidgetSize.Small), true);
-            menu.AddWidget(new Button("Button 3"), true);
-
-            menu.AddWidget(new ScrollBar("Music"));
-            menu.AddWidget(new Button("Button 4"), true);
-            menu.AddWidget(new Button("Button 5", Widget.WidgetSize.Small), true);
-
-            menu.AddWidget(new Lock("Text", Widget.WidgetSize.Small));
-            menu.AddWidget(new Button("Button 6", Widget.WidgetSize.Small), true);
-            menu.AddWidget(new Button("Button 7", Widget.WidgetSize.Small), true);
-            menu.AddWidget(new Lock("A", Widget.WidgetSize.Narrow), true);
-            menu.AddWidget(new Button("Button 8", Widget.WidgetSize.Small), true);
-            menu.AddWidget(new Button("A", Widget.WidgetSize.Narrow), true);
-
-            menu.AddWidget(new Lock("B", Widget.WidgetSize.Narrow));
-            menu.AddWidget(new Button("Button 9"), true);
-            menu.AddWidget(new TextBox("Text_1"), true);
-            menu.AddWidget(new Button("B", Widget.WidgetSize.Narrow), true);
-
-            menu.Origin = new Vector2f(menu.Size.X / 2f, menu.Size.Y / 2f);
+            menu.Origin = menu.Size / 2f;
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
+        }
+
+        private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        {
+            Game.Machine.ChangeState(new StatePlaying(Game));
+        }
+
+        private void Button2_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        {
+            //Console.WriteLine("Add Settings");
+            Game.Machine.PushState(new SettingState(Game));
+        }
+
+        private void Button3_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        {
+            Game.Machine.Reset();
+            //Game.Window.Close();
         }
 
         public override void Render(float alpha)
         {
+            Game.Window.Draw(background);
             Game.Window.Draw(menu);
         }
 
@@ -68,7 +91,18 @@ namespace GameEngine.States
 
         private void Window_Resized(object sender, SizeEventArgs e)
         {
+            background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
+        }
+
+        public override void Pause()
+        {
+            button2.WidgetEvent -= Button2_WidgetEvent;
+        }
+
+        public override void Resume()
+        {
+            button2.WidgetEvent += Button2_WidgetEvent;
         }
     }
 }

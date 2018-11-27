@@ -14,7 +14,9 @@ namespace GameEngine.GUI
     {
         public override event EventHandler<WidgetEventArgs> WidgetEvent = (object sender, WidgetEventArgs e) => { };
 
-        public bool IsLocked { get; set; }
+        public bool Value { get => isLocked; set { isLocked = value; UpdateState(); } }
+
+        private bool isLocked;
         private RectangleShape locker;
 
         public Lock() : this("")
@@ -73,9 +75,9 @@ namespace GameEngine.GUI
             {
                 if (isEntered)
                 {
-                    IsLocked = IsLocked ? false : true;
+                    isLocked = isLocked ? false : true;
 
-                    WidgetEvent(this, new WidgetEventArgs("", Convert.ToInt32(IsLocked), isActive));
+                    WidgetEvent(this, new WidgetEventArgs("", Convert.ToInt32(isLocked), isActive));
                 }
             }
         }
@@ -94,27 +96,27 @@ namespace GameEngine.GUI
         protected override void NotActiveState()
         {
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(IsLocked), 0, 20, 20);
+                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 0, 20, 20);
             else
-                locker.FillColor = IsLocked ? Color.Red : new Color(244, 183, 19);
+                locker.FillColor = isLocked ? Color.Red : new Color(244, 183, 19);
 
             text.Color = Color.White;
         }
         protected override void ActiveState()
         {
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(IsLocked), 20, 20, 20);
+                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 20, 20, 20);
             else
-                locker.FillColor = IsLocked ? new Color(22, 192, 82) : new Color(52, 152, 219);
+                locker.FillColor = isLocked ? new Color(22, 192, 82) : new Color(52, 152, 219);
 
             text.Color = Color.White;
         }
         protected override void SelectedState()
         {
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(IsLocked), 40, 20, 20);
+                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 40, 20, 20);
             else
-                locker.FillColor = IsLocked ? new Color(50, 196, 19) : new Color(45, 107, 236);
+                locker.FillColor = isLocked ? new Color(50, 196, 19) : new Color(45, 107, 236);
 
             text.Color = new Color(255, 255, 130);
         }

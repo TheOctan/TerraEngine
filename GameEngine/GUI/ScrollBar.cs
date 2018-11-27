@@ -14,6 +14,12 @@ namespace GameEngine.GUI
     {
         public override event EventHandler<WidgetEventArgs> WidgetEvent = (object sender, WidgetEventArgs e) => { };
 
+        public int Value
+        {
+            get => value;
+            set { this.value = value >= maxValue ? maxValue : value; }
+        }
+
         private RectangleShape bar;
         private string message;
 

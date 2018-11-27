@@ -1,4 +1,5 @@
-﻿using GameEngine.Event;
+﻿using GameEngine.Core;
+using GameEngine.Event;
 using GameEngine.Resource;
 using SFML.Graphics;
 using SFML.System;
@@ -83,7 +84,7 @@ namespace GameEngine.GUI
                 UpdateState();
             }
         }
-        //public abstract int Value { get; set; }
+        
         public bool IsActive
         {
             get => isActive;

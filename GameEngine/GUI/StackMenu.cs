@@ -21,8 +21,9 @@ namespace GameEngine.GUI
                 backGround.Texture = value;
             }
         }
+        public Color FillColor { get => backGround.FillColor; set => backGround.FillColor = value; }
         public Vector2f Size { get => backGround.Size; private set => backGround.Size = value; }
-
+        
         private List<Widget> widgets;
         private RectangleShape backGround;
 

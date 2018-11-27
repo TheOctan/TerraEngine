@@ -9,6 +9,7 @@ namespace GameEngine.States.StateMachine
     public class StateMachine
     {
         public bool Empty => states.Count == 0;
+        public int Count => states.Count;
 
         public StateMachine()
         {

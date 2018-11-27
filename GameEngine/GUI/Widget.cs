@@ -40,8 +40,6 @@ namespace GameEngine.GUI
 
             #endregion
 
-
-
             state = WidgetState.active;
             gloabalMousePos = new Vector2f(-1, 0);
             localMousePos = new Vector2f(-1, 0);

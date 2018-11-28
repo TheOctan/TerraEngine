@@ -12,9 +12,22 @@ namespace Terraria
 {
     public enum TileType
     {
-        None,
         Ground,
-        Grass
+        Grass,
+        DriedGrass,
+        Hellstone,
+        FrozenGrass,
+        RawGrass,
+        MarshGrass,
+        Delta,
+        Delta2,
+        GeariteBrick,
+        Molybdenum,
+        PermafrostHellstone,
+        SampleOre3,
+        SampleOre4,
+        SoulIce,
+        None
     }
 
     public class Tile : Transformable, Drawable
@@ -108,16 +121,22 @@ namespace Terraria
 
             switch (type)
             {
-                case TileType.None:
-                    break;
-
-                case TileType.Ground:
-                    rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_0");
-                    break;
-
-                case TileType.Grass:
-                    rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_1");
-                    break;
+                case TileType.Ground:               rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_0"); break;
+                case TileType.Grass:                rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_1"); break;
+                case TileType.DriedGrass:           rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_2"); break;
+                case TileType.Hellstone:            rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_3"); break;
+                case TileType.FrozenGrass:          rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_4"); break;
+                case TileType.RawGrass:             rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_5"); break;
+                case TileType.MarshGrass:           rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Tiles_6"); break;
+                case TileType.Delta:                rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Delta"); break;
+                case TileType.Delta2:               rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Delta_2"); break;
+                case TileType.GeariteBrick:         rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "GeariteBrick"); break;
+                case TileType.Molybdenum:           rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Molybdenum"); break;
+                case TileType.PermafrostHellstone:  rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "PermafrostHellstone"); break;
+                case TileType.SampleOre3:           rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "SampleOre_3"); break;
+                case TileType.SampleOre4:           rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "SampleOre_4"); break;
+                case TileType.SoulIce:              rectShape.Texture = ResourceHolder.Textures.Get(Content.TILES_DIR + "Soul_Ice"); break;
+                case TileType.None: break;
             }
 
             spriteSheet = new SpriteSheet(TILE_SIZE, TILE_SIZE, 1);

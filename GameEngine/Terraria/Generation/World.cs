@@ -4,6 +4,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace Terraria
         RectangleShape sky;
         RectangleShape forest;
         RectangleShape field;
+
+        string[] cells;
 
         public World()
         {
@@ -34,9 +37,7 @@ namespace Terraria
 
             Game.Window.Resized += UpdateBackgroud;
 
-            chunks = new Chunk[WORLD_SIZE][];
-            for (int i = 0; i < WORLD_SIZE; i++)
-                chunks[i] = new Chunk[WORLD_SIZE];
+            ResetWorld();
         }
 
         private void UpdateBackgroud(object sender, SFML.Window.SizeEventArgs e)
@@ -49,23 +50,56 @@ namespace Terraria
             field.Position = new Vector2f(0, e.Height - field.Size.Y);
         }
 
-        public void GenerateWorld()
+        public void GenerateWorld(string location)
         {
-            for (int x = 3; x <= 46; x++)
-                for (int y = 17; y <= 17; y++)
-                    SetTile(TileType.Grass, x, y);
+            if(LoadFromFile("Levels/" + location + ".level"))
+            {
+                ResetWorld();
 
-            for (int x = 3; x <= 46; x++)
-                for (int y = 18; y <= 32; y++)
-                    SetTile(TileType.Ground, x, y);
+                for (int y = 0; y < cells.Length; y++)
+                {
+                    for (int x = 0; x < cells[y].Length; x++)
+                    {
+                        switch (cells[y][x])
+                        {
+                            //case ' ': SetTile(TileType.None, x, y); break;
+                            case '0': SetTile(TileType.Ground, x, y); break;
+                            case '1': SetTile(TileType.Grass, x, y); break;
+                            case '2': SetTile(TileType.DriedGrass, x, y); break;
+                            case '3': SetTile(TileType.Hellstone, x, y); break;
+                            case '4': SetTile(TileType.FrozenGrass, x, y); break;
+                            case '5': SetTile(TileType.RawGrass, x, y); break;
+                            case '6': SetTile(TileType.MarshGrass, x, y); break;
+                            case '7': SetTile(TileType.Delta, x, y); break;
+                            case '8': SetTile(TileType.Delta2, x, y); break;
+                            case '9': SetTile(TileType.GeariteBrick, x, y); break;
+                            case 'a': SetTile(TileType.Molybdenum, x, y); break;
+                            case 'b': SetTile(TileType.PermafrostHellstone, x, y); break;
+                            case 'c': SetTile(TileType.SampleOre3, x, y); break;
+                            case 'd': SetTile(TileType.SampleOre4, x, y); break;
+                            case 'e': SetTile(TileType.SoulIce, x, y); break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int x = 3; x <= 46; x++)
+                    for (int y = 17; y <= 17; y++)
+                        SetTile(TileType.Grass, x, y);
 
-            for (int x = 3; x <= 4; x++)
-                for (int y = 1; y <= 17; y++)
-                    SetTile(TileType.Ground, x, y);
+                for (int x = 3; x <= 46; x++)
+                    for (int y = 18; y <= 32; y++)
+                        SetTile(TileType.Ground, x, y);
 
-            for (int x = 45; x <= 46; x++)
-                for (int y = 1; y <= 17; y++)
-                    SetTile(TileType.Ground, x, y);
+                for (int x = 3; x <= 4; x++)
+                    for (int y = 1; y <= 17; y++)
+                        SetTile(TileType.Ground, x, y);
+
+                for (int x = 45; x <= 46; x++)
+                    for (int y = 1; y <= 17; y++)
+                        SetTile(TileType.Ground, x, y);
+            }
         }
 
         public void SetTile(TileType type, int x, int y)
@@ -133,6 +167,22 @@ namespace Terraria
                     target.Draw(chunks[x][y]);
                 }
             }
+        }
+
+        private bool LoadFromFile(string fileName)
+        {
+            if (!File.Exists(fileName)) return false;
+
+            cells = File.ReadAllLines(fileName);
+
+            return true;
+        }
+
+        private void ResetWorld()
+        {
+            chunks = new Chunk[WORLD_SIZE][];
+            for (int i = 0; i < WORLD_SIZE; i++)
+                chunks[i] = new Chunk[WORLD_SIZE];
         }
     }
 }

@@ -318,9 +318,10 @@ namespace Terraria.Gameplay.NPC
 
             bool isMove = isMoveLeft || isMoveRight;
 
-            if (isJump && !isFly)
+            if (isJump && !isFly && onGround)
             {
                 velocity = new Vector2f(0, -6);
+                onGround = false;
             }
 
             if (isMove)
@@ -367,6 +368,21 @@ namespace Terraria.Gameplay.NPC
                 asLegs.Play("idle");
                 asShoes.Play("idle");
             }
+        }
+
+        protected override void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
+        {
+            Tile[] walls = new Tile[]
+            {
+                world.GetTile(pX - 1, pY - 1),
+                world.GetTile(pX - 1, pY - 2),
+                world.GetTile(pX - 1, pY - 3),
+                world.GetTile(pX + 1, pY - 1),
+                world.GetTile(pX + 1, pY - 2),
+                world.GetTile(pX + 1, pY - 3)
+            };
+
+            checkWall(playerRect, pX, pY, walls);
         }
     }
 }

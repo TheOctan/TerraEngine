@@ -44,12 +44,13 @@ namespace Terraria.Gameplay.NPC
 
         public override void UpdateNPC()
         {
-            if (!isFly)
+            if (!isFly && onGround)
             {
                 if (waitTimer >= TIME_WAIT_JUMP)
                 {
                     velocity = new Vector2f(Direction * Program.Rand.Next(1, 10), -Program.Rand.Next(6, 9));
                     waitTimer = 0f;
+                    onGround = false;
                 }
                 else
                 {
@@ -68,6 +69,21 @@ namespace Terraria.Gameplay.NPC
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
 
+        }
+
+        protected override void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
+        {
+            Tile[] walls = new Tile[]
+            {
+                world.GetTile(pX - 1, pY - 1),
+                world.GetTile(pX - 1, pY - 2),
+                //world.GetTile(pX - 1, pY - 3),
+                world.GetTile(pX + 1, pY - 1),
+                world.GetTile(pX + 1, pY - 2),
+                //world.GetTile(pX + 1, pY - 3)
+            };
+
+            checkWall(playerRect, pX, pY, walls);
         }
     }
 }

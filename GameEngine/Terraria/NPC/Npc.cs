@@ -19,6 +19,7 @@ namespace Terraria.Gameplay.NPC
         protected Vector2f movement;
         protected World world;
         protected bool isFly = true;
+        protected bool onGround = false;
         protected bool isRectVisible = true;
 
         public int Direction
@@ -79,17 +80,40 @@ namespace Terraria.Gameplay.NPC
 
             int pX = (int)((Position.X - rect.Origin.X + rect.Size.X / 2) / Tile.TILE_SIZE);
             int pY = (int)((Position.Y + rect.Size.Y) / Tile.TILE_SIZE);
+            int pY2 = (int)(Position.Y / Tile.TILE_SIZE);
 
-            Tile tile = world.GetTile(pX, pY);
+            Tile downTile = world.GetTile(pX, pY);
+            Tile upTile = world.GetTile(pX, pY2);
 
-            if (tile != null)
+            if (downTile != null)
             {
-                FloatRect tileRect = new FloatRect(tile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
+                FloatRect tileRect = new FloatRect(downTile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
 
                 DebugRender.AddRectangle(tileRect, Color.Red);
 
                 isFall = !playerRect.Intersects(tileRect);
                 isFly = isFall;
+
+                if(playerRect.Intersects(tileRect))
+                {
+                    Position = new Vector2f(Position.X, downTile.Position.Y - rect.Size.Y + 5);
+                    onGround = true;
+                }
+            }
+
+            if (upTile != null)
+            {
+                FloatRect tileRect = new FloatRect(upTile.Position, new Vector2f(Tile.TILE_SIZE, Tile.TILE_SIZE));
+
+                DebugRender.AddRectangle(tileRect, Color.Magenta);
+
+                isFall = !playerRect.Intersects(tileRect);
+                isFly = isFall;
+
+                if (playerRect.Intersects(tileRect))
+                {
+                    Position = new Vector2f(Position.X, upTile.Position.Y + Tile.TILE_SIZE);
+                }
             }
 
             if (!isFall)
@@ -100,18 +124,9 @@ namespace Terraria.Gameplay.NPC
             UpdatePhysicsWall(playerRect, pX, pY);
         }
 
-        private void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)
+        protected abstract void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY);
+        protected void checkWall(FloatRect playerRect, int pX, int pY, Tile[] walls)
         {
-            Tile[] walls = new Tile[]
-            {
-                world.GetTile(pX - 1, pY - 1),
-                world.GetTile(pX - 1, pY - 2),
-                world.GetTile(pX - 1, pY - 3),
-                world.GetTile(pX + 1, pY - 1),
-                world.GetTile(pX + 1, pY - 2),
-                world.GetTile(pX + 1, pY - 3)
-            };
-
             foreach (Tile tile in walls)
             {
                 if (tile == null) continue;
@@ -141,6 +156,7 @@ namespace Terraria.Gameplay.NPC
                 }
             }
         }
+
 
         public abstract void OnKill();
         public abstract void OnWallCollided();

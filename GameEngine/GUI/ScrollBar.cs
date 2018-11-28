@@ -110,9 +110,13 @@ namespace GameEngine.GUI
         {
             if (e.Button == Mouse.Button.Left)
             {
-                if (isEntered && isClicked)
+                if(isClicked)
                 {
-                    state = WidgetState.selected;
+                    if(isEntered)
+                    {
+                        state = WidgetState.selected;
+                    }
+
                     WidgetEvent(this, new WidgetEventArgs("", value, isActive));
                 }
 

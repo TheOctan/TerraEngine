@@ -64,6 +64,7 @@ namespace GameEngine.States
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
+            button1.WidgetEvent -= Button1_WidgetEvent;
             Game.Machine.ChangeState(new StatePlaying(game));
         }
 

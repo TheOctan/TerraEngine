@@ -57,6 +57,7 @@ namespace GameEngine.States.StateMachine
             }
             if(shouldChange && !Empty)
             {
+                if (!Empty) states.Peek().Pause();
                 states.Pop();
                 states.Push(change);
                 states.Peek().Init();

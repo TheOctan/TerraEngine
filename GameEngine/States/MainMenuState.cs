@@ -58,19 +58,22 @@ namespace GameEngine.States
             menu.AddWidget(button2);
             menu.AddWidget(button3);
 
+            menu.Subscribe();
+
             menu.Origin = menu.Size / 2f;
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            button1.WidgetEvent -= Button1_WidgetEvent;
+            Game.Window.Resized -= Window_Resized;
+            menu.Unsubscribe();
+
             Game.Machine.ChangeState(new StatePlaying(game));
         }
 
         private void Button2_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            //Console.WriteLine("Add Settings");
             Game.Machine.PushState(new SettingState(game));
         }
 
@@ -99,12 +102,12 @@ namespace GameEngine.States
 
         public override void Pause()
         {
-            button2.WidgetEvent -= Button2_WidgetEvent;
+            menu.Unsubscribe();
         }
 
         public override void Resume()
         {
-            button2.WidgetEvent += Button2_WidgetEvent;
+            menu.Subscribe();
         }
     }
 }

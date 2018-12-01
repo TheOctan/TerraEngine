@@ -31,16 +31,6 @@ namespace GameEngine.GUI
 
         public Widget(WidgetSize size)
         {
-            #region Subscribing
-
-            Game.Window.MouseMoved += Window_MouseMoved;
-            Game.Window.MouseButtonPressed += Window_MouseButtonPressed;
-            Game.Window.MouseButtonReleased += Window_MouseButtonReleased;
-            Game.Window.KeyPressed += Window_KeyPressed;
-            Game.Window.TextEntered += Window_TextEntered;
-
-            #endregion
-
             state = WidgetState.active;
             gloabalMousePos = new Vector2f(-1, 0);
             localMousePos = new Vector2f(-1, 0);
@@ -99,6 +89,24 @@ namespace GameEngine.GUI
         {
             get         => rect.Size; 
             private set => rect.Size = value;
+        }
+
+        public void Subscribe()
+        {
+            Game.Window.MouseMoved          += Window_MouseMoved;
+            Game.Window.MouseButtonPressed  += Window_MouseButtonPressed;
+            Game.Window.MouseButtonReleased += Window_MouseButtonReleased;
+            Game.Window.KeyPressed          += Window_KeyPressed;
+            Game.Window.TextEntered         += Window_TextEntered;
+        }
+
+        public void Unsubscribe()
+        {
+            Game.Window.MouseMoved          -= Window_MouseMoved;
+            Game.Window.MouseButtonPressed  -= Window_MouseButtonPressed;
+            Game.Window.MouseButtonReleased -= Window_MouseButtonReleased;
+            Game.Window.KeyPressed          -= Window_KeyPressed;
+            Game.Window.TextEntered         -= Window_TextEntered;
         }
 
         public void Update()

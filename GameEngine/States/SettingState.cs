@@ -1,4 +1,5 @@
 ﻿using GameEngine.Core;
+using GameEngine.Event;
 using GameEngine.GUI;
 using GameEngine.Resource;
 using GameEngine.States.StateMachine;
@@ -67,6 +68,8 @@ namespace GameEngine.States
             menu.AddWidget(locker1);
             menu.AddWidget(button1);
 
+            menu.Subscribe();
+
             menu.Origin = menu.Size / 2f;
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
@@ -85,39 +88,50 @@ namespace GameEngine.States
         private void Window_Resized(object sender, SizeEventArgs e)
         {
             background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
+            menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
-        private void Bar1_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        private void Bar1_WidgetEvent(object sender, WidgetEventArgs e)
         {
             game.settings.Music = e.Value;
         }
 
-        private void Bar2_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        private void Bar2_WidgetEvent(object sender, WidgetEventArgs e)
         {
             game.settings.Value = e.Value;
         }
 
-        private void Locker1_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        private void Locker1_WidgetEvent(object sender, WidgetEventArgs e)
         {
             game.settings.FullScreen = locker1.Value;
 
             if(game.settings.FullScreen)
             {
-                //Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Default);
+                Game.Window.Close();
+                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Fullscreen);
+                Game.Window.SetFramerateLimit(60);
+
+                game.Subscribe();
+                menu.Subscribe();
+                Game.Window.Resized += Window_Resized;
             }
             else
             {
-                
-                //Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Default);
-            }
+                Game.Window.Close();
+                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Default);
+                Game.Window.SetFramerateLimit(60);
 
-            
+                game.Subscribe();
+                menu.Subscribe();
+                Game.Window.Resized += Window_Resized;
+            }
         }
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            //Game.Machine.ChangeState(new MainMenuState(Game));
-            button1.WidgetEvent -= Button1_WidgetEvent;
+            Game.Window.Resized -= Window_Resized;
+            menu.Unsubscribe();
+
             Game.Machine.PopState();
         }
     }

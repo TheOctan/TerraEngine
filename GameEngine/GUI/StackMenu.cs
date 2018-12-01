@@ -64,6 +64,22 @@ namespace GameEngine.GUI
             widgets = new List<Widget>();
         }
 
+        public void Subscribe()
+        {
+            foreach (var widget in widgets)
+            {
+                widget.Subscribe();
+            }
+        }
+
+        public void Unsubscribe()
+        {
+            foreach (var widget in widgets)
+            {
+                widget.Unsubscribe();
+            }
+        }
+
         public void AddWidget(Widget widget, bool rightSide = false)
         {
             InitWidget  (widget, rightSide);

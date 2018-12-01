@@ -23,32 +23,41 @@ namespace GameEngine.Core
         public Settings settings;
         private FPSCounter counter;
 
-        public Game()
+        public Game(bool fullScreen = true)
         {
-            Machine = new StateMachine();
-            Window = new RenderWindow(VideoMode.DesktopMode, GameName, Styles.Fullscreen);
-            Window.SetFramerateLimit(60);
-
-            Window.Closed += Window_Closed;
-            Window.Resized += Window_Resized;
-            Window.KeyPressed += Window_KeyPressed;
-
-            counter = new FPSCounter();
-            counter.Text = GameName;
-
             settings = new Settings()
             {
                 Music = 100,
                 Value = 100,
-                FullScreen = true
+                FullScreen = fullScreen
             };
+
+            Machine = new StateMachine();
+
+            Window = fullScreen ? 
+                new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) 
+                : new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Default);
+
+            Window.SetFramerateLimit(60);
+
+            Subscribe();
+
+            counter = new FPSCounter();
+            counter.Text = GameName;
 
             Machine.PushState(new MainMenuState(this));
         }
 
+        public void Subscribe()
+        {
+            Window.Closed += Window_Closed;
+            Window.Resized += Window_Resized;
+            Window.KeyPressed += Window_KeyPressed;
+        }
+
         private void Window_KeyPressed(object sender, KeyEventArgs e)
         {
-            if(e.Code == Keyboard.Key.Tab)
+            if (e.Code == Keyboard.Key.Tab)
             {
                 VisibleCounter = VisibleCounter ? false : true;
             }
@@ -66,12 +75,12 @@ namespace GameEngine.Core
 
         public void Run()
         {
-            const uint  TPS = 60;
+            const uint TPS = 60;
             Time dt = Time.FromSeconds(1.0f / TPS);
             //uint ticks = 0;
 
             Clock timer = new Clock();
-            var lastTime    = Time.Zero;
+            var lastTime = Time.Zero;
             var accumulator = Time.Zero;
 
             while (Window.IsOpen && !Machine.Empty)
@@ -79,8 +88,8 @@ namespace GameEngine.Core
                 var state = Machine.GetCurrentState();
 
                 // get times
-                var time        = timer.ElapsedTime;
-                var frameTime   = time - lastTime;
+                var time = timer.ElapsedTime;
+                var frameTime = time - lastTime;
                 if (frameTime > Time.FromSeconds(0.25f)) frameTime = Time.FromSeconds(0.25f);
 
                 lastTime = time;

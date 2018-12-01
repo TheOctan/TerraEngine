@@ -24,7 +24,6 @@ namespace GameEngine.States
 
         public MainMenuState(Game game) : base(game)
         {
-            Game.Window.Resized += Window_Resized;
         }
 
         public override void HandleInput()
@@ -66,7 +65,6 @@ namespace GameEngine.States
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            Game.Window.Resized -= Window_Resized;
             menu.Unsubscribe();
 
             Game.Machine.ChangeState(new StatePlaying(game));
@@ -92,12 +90,6 @@ namespace GameEngine.States
         public override void Update(Time time)
         {
             menu.Update();
-        }
-
-        private void Window_Resized(object sender, SizeEventArgs e)
-        {
-            background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
-            menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
         public override void Pause()

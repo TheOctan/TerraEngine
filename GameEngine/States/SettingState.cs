@@ -26,7 +26,6 @@ namespace GameEngine.States
 
         public SettingState(Game game) : base(game)
         {
-            Game.Window.Resized += Window_Resized;
         }
 
         public override void HandleInput()
@@ -85,12 +84,6 @@ namespace GameEngine.States
             menu.Update();
         }
 
-        private void Window_Resized(object sender, SizeEventArgs e)
-        {
-            background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
-            menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
-        }
-
         private void Bar1_WidgetEvent(object sender, WidgetEventArgs e)
         {
             game.settings.Music = e.Value;
@@ -113,23 +106,20 @@ namespace GameEngine.States
 
                 game.Subscribe();
                 menu.Subscribe();
-                Game.Window.Resized += Window_Resized;
             }
             else
             {
                 Game.Window.Close();
-                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Default);
+                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Close);
                 Game.Window.SetFramerateLimit(60);
 
                 game.Subscribe();
                 menu.Subscribe();
-                Game.Window.Resized += Window_Resized;
             }
         }
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
         {
-            Game.Window.Resized -= Window_Resized;
             menu.Unsubscribe();
 
             Game.Machine.PopState();

@@ -36,7 +36,7 @@ namespace GameEngine.Core
 
             Window = fullScreen ? 
                 new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) 
-                : new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Default);
+                : new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Close);
 
             Window.SetFramerateLimit(60);
 
@@ -51,7 +51,6 @@ namespace GameEngine.Core
         public void Subscribe()
         {
             Window.Closed += Window_Closed;
-            Window.Resized += Window_Resized;
             Window.KeyPressed += Window_KeyPressed;
         }
 
@@ -66,11 +65,6 @@ namespace GameEngine.Core
         private void Window_Closed(object sender, EventArgs e)
         {
             Window.Close();
-        }
-
-        private void Window_Resized(object sender, SizeEventArgs e)
-        {
-            Window.SetView(new View(new FloatRect(0, 0, e.Width, e.Height)));
         }
 
         public void Run()

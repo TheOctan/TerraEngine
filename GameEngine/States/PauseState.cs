@@ -24,7 +24,6 @@ namespace GameEngine.States
 
         public PauseState(Game game) : base(game)
         {
-            Game.Window.Resized += Window_Resized;
         }
 
         public override void HandleInput()
@@ -71,15 +70,8 @@ namespace GameEngine.States
             menu.Update();
         }
 
-        private void Window_Resized(object sender, SizeEventArgs e)
-        {
-            background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
-            menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
-        }
-
         private void Button1_WidgetEvent(object sender, WidgetEventArgs e)
         {
-            Game.Window.Resized -= Window_Resized;
             menu.Unsubscribe();
 
             Game.Machine.PopState();
@@ -87,7 +79,6 @@ namespace GameEngine.States
 
         private void Button2_WidgetEvent(object sender, WidgetEventArgs e)
         {
-            Game.Window.Resized -= Window_Resized;
             menu.Unsubscribe();
 
             Game.Machine.PopState();

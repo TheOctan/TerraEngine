@@ -33,6 +33,8 @@ namespace GameEngine.States
         private Text readyPlayer2Text;
         private Text message;
 
+        private RectangleShape rect;
+
         private Timer timer;
 
         private World world;
@@ -72,8 +74,13 @@ namespace GameEngine.States
                 Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
                 Game.Window.Size.Y / 2 - message.GetLocalBounds().Height);
 
+            rect = new RectangleShape();
+            rect.FillColor = new Color(0, 0, 0, 150);
+            rect.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y / 4f);
+            rect.Position = new Vector2f(0, Game.Window.Size.Y / 2 - rect.GetGlobalBounds().Height / 1.5f);
+
             timer = new Timer(0, 3);
-            timer.Position = new Vector2f(Game.Window.Size.X - timer.GetGlobalBounds().Width - 25, 10);
+            timer.Position = new Vector2f(Game.Window.Size.X / 2f - timer.GetGlobalBounds().Width / 2f, 10);
             timer.EndTime += Timer_EndTime;
 
             world = new World();
@@ -164,13 +171,17 @@ namespace GameEngine.States
                     player.Reset();
                 }
 
+                rect.Size       = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y / 2f);
+                rect.Position   = new Vector2f(0, Game.Window.Size.Y - rect.GetGlobalBounds().Height);
+
                 int countSlimes1 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
                 int countSlimes2 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
 
-                message.DisplayedString = "Game Over" + 
-                                          (countSlimes1 > countSlimes2 ? 
+                message.DisplayedString = "Game Over" +
+                                          (countSlimes1 > countSlimes2 ?
                                               $"\nWins {labels[0].Text}\nScore {countSlimes1}" :
                                               countSlimes2 > countSlimes1 ? $"\nWins {labels[0].Text}\nScore {countSlimes1}" : "\nDraw");
+
                 message.Position = new Vector2f(
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
                     Game.Window.Size.Y / 2);
@@ -202,7 +213,7 @@ namespace GameEngine.States
                 for (int i = 0; i < level.countSlimes; i++)
                 {
                     var s = new NpcSlime(world);
-                    s.startPosition = new Vector2f(Program.Rand.Next(150, 1000), 400);
+                    s.startPosition = new Vector2f(Program.Rand.Next(50, 1200), Program.Rand.Next(25, 400));
                     s.Direction = Program.Rand.Next(0, 2) == 0 ? 1 : -1;
                     s.Spawn();
                     slimes.Add(s);
@@ -241,9 +252,13 @@ namespace GameEngine.States
                 Game.Window.Draw(readyPlayer1Text);
             }
 
-            if (showMessage)
-                Game.Window.Draw(message);
 
+
+            if (showMessage)
+            {
+                Game.Window.Draw(rect);
+                Game.Window.Draw(message);
+            }
 
             DebugRender.Draw(Game.Window);
         }

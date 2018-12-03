@@ -32,6 +32,8 @@ namespace GameEngine.Util
         private Text point;
         private Text secondDischarge;
 
+        private RectangleShape rect;
+
         private Clock timer;
 
         private bool isUpdate;
@@ -53,34 +55,33 @@ namespace GameEngine.Util
             {
                 DisplayedString = minute >= 10 ? minute.ToString() : "0" + minute.ToString(),
                 Font = ResourceHolder.Fonts.Get("digifaw"),
-                CharacterSize = 50
+                CharacterSize = 50,
+                Position = new Vector2f(5, 0)
             };
             point = new Text()
             {
                 DisplayedString = ".",
                 Font = ResourceHolder.Fonts.Get("digifaw"),
                 CharacterSize = 50,
-                Position = new Vector2f(firstDischarge.GetGlobalBounds().Width + 20, 0)
+                Position = new Vector2f(firstDischarge.GetGlobalBounds().Width + 20 + 5, 0)
             };
             secondDischarge = new Text()
             {
                 DisplayedString = second >= 10 ? second.ToString() : "0" + second.ToString(),
                 Font = ResourceHolder.Fonts.Get("digifaw"),
                 CharacterSize = 50,
-                Position = new Vector2f(point.Position.X + point.GetGlobalBounds().Width + 5, 0)
+                Position = new Vector2f(point.Position.X + point.GetGlobalBounds().Width + 5 + 5, 0)
             };
+
+            rect = new RectangleShape(new Vector2f(firstDischarge.GetGlobalBounds().Width +
+                                                   point.GetGlobalBounds().Width +
+                                                   secondDischarge.GetGlobalBounds().Width + 25 + 20, 60));
+            rect.FillColor = new Color(0, 0, 0, 150);
         }
 
         public FloatRect GetLocalBounds()
         {
-            return new FloatRect(
-                firstDischarge.Position, 
-                new Vector2f(
-                    firstDischarge.GetLocalBounds().Width + 
-                    point.GetLocalBounds().Width + 
-                    secondDischarge.GetLocalBounds().Width + 25, 
-                    firstDischarge.GetLocalBounds().Height)
-                );
+            return rect.GetLocalBounds();
         }
 
         public FloatRect GetGlobalBounds()
@@ -146,6 +147,7 @@ namespace GameEngine.Util
         {
             states.Transform *= Transform;
 
+            target.Draw(rect, states);
             target.Draw(firstDischarge, states);
             target.Draw(point, states);
             target.Draw(secondDischarge, states);

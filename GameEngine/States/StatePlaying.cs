@@ -20,11 +20,11 @@ namespace GameEngine.States
 {
     public class StatePlaying : StateBase
     {
-        private bool gameOver       = false;
-        private bool startGame      = false;
-        private bool readyPlayer1   = false;
-        private bool readyPlayer2   = false;
-        private bool showMessage    = false;
+        private bool gameOver = false;
+        private bool startGame = false;
+        private bool readyPlayer1 = false;
+        private bool readyPlayer2 = false;
+        private bool showMessage = false;
 
         private Vector2f startPosition1;
         private Vector2f startPosition2;
@@ -38,12 +38,10 @@ namespace GameEngine.States
         //private Text
 
         private World world;
-        private Player player1;
-        private Player player2;
-        private Label label1;
-        private Label label2;
 
+        private List<Player> players;
         private List<NpcSlime> slimes;
+        private List<Label> labels;
 
         private string[] levelInformation = new string[1];
         private int currentLocation = 0;
@@ -81,29 +79,36 @@ namespace GameEngine.States
             timer.EndTime += Timer_EndTime;
 
             world = new World();
-            player1 = new Player(world)
-            {
-            };
-            player2 = new Player(world)
-            {
-                Jump = Keyboard.Key.Up,
-                Left = Keyboard.Key.Left,
-                Rigt = Keyboard.Key.Right,
-                BodyColor = new Color(135, 84, 56),
-                HairColor = new Color(72, 193, 32),
-                ShirtColor = new Color(255, 128, 0),
-                LegsColor = new Color(130, 0, 130),
-                Scale = new Vector2f(-1, 1)
-            };
             slimes = new List<NpcSlime>();
+            players = new List<Player>()
+            {
+                new Player(world)
+                {
+                    ActiveColor = Color.Blue
+                },
+                new Player(world)
+                {
+                    ActiveColor = Color.Red,
+                    Jump = Keyboard.Key.Up,
+                    Left = Keyboard.Key.Left,
+                    Rigt = Keyboard.Key.Right,
+                    BodyColor = new Color(135, 84, 56),
+                    HairColor = new Color(72, 193, 32),
+                    ShirtColor = new Color(255, 128, 0),
+                    LegsColor = new Color(130, 0, 130),
+                    Scale = new Vector2f(-1, 1)
+                }
+            };
 
-            label1 = new Label();
-            label1.Text = "Player 0";
-            label1.Origin = new Vector2f(label1.Size.X / 2f, 0);
-
-            label2 = new Label();
-            label2.Text = "Player 1";
-            label2.Origin = new Vector2f(label2.Size.X / 2f, 0);
+            labels = new List<Label>()
+            {
+                new Label() { Text = "Player 0" },
+                new Label() { Text = "Player 1" }
+            };
+            foreach (var label in labels)
+            {
+                label.Origin = new Vector2f(label.Size.X / 2f, 0);
+            }
 
             Game.Window.KeyPressed += Window_KeyPressed;
         }
@@ -119,7 +124,7 @@ namespace GameEngine.States
                 Game.Window.KeyPressed -= Window_KeyPressed;
                 Game.Machine.ChangeState(new StatePlaying(game));
             }
-            else if(e.Code == Keyboard.Key.F4)
+            else if (e.Code == Keyboard.Key.F4)
             {
                 isUpdate = isUpdate ? false : true;
             }
@@ -132,7 +137,7 @@ namespace GameEngine.States
             {
                 readyPlayer1 = true;
                 readyPlayer1Text.DisplayedString = "Ready";
-                if(readyPlayer2) timer.Start();
+                if (readyPlayer2) timer.Start();
             }
             else if ((e.Code == Keyboard.Key.Left || e.Code == Keyboard.Key.Right || e.Code == Keyboard.Key.Up || e.Code == Keyboard.Key.Down) && !readyPlayer2)
             {
@@ -148,7 +153,7 @@ namespace GameEngine.States
             {
                 startGame = true;
                 showMessage = true;
-                timer.Reset(0,3);
+                timer.Reset(1);
                 timer.Start();
             }
             else
@@ -156,13 +161,20 @@ namespace GameEngine.States
                 gameOver = true;
                 showMessage = true;
 
-                player1.Reset();
-                player2.Reset();
+                foreach (var player in players)
+                {
+                    player.Reset();
+                }
+
+                int countSlimes1 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
+                int countSlimes2 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
 
                 message.DisplayedString = "Game Over";
                 message.Position = new Vector2f(
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
                     Game.Window.Size.Y / 2 - message.GetLocalBounds().Height);
+
+
             }
         }
 
@@ -180,16 +192,18 @@ namespace GameEngine.States
 
                 world.GenerateWorld(level.levelName);
 
-                player1.startPosition = level.position1;
-                player2.startPosition = level.position2;
+                players[0].startPosition = level.position1;
+                players[1].startPosition = level.position2;
             }
             catch (FormatException e)
             {
-                
+
             }
 
-            player1.Spawn();
-            player2.Spawn();
+            foreach (var player in players)
+            {
+                player.Spawn();
+            }
 
             for (int i = 0; i < 10; i++)
             {
@@ -206,15 +220,20 @@ namespace GameEngine.States
         public override void Render(float alpha)
         {
             Game.Window.Draw(world);
-            Game.Window.Draw(player1);
-            Game.Window.Draw(player2);
-            Game.Window.Draw(label1);
-            Game.Window.Draw(label2);
+            foreach (var player in players)
+            {
+                Game.Window.Draw(player);
+            }
+
+            foreach (var label in labels)
+            {
+                Game.Window.Draw(label);
+            }
 
             foreach (var s in slimes)
                 Game.Window.Draw(s);
 
-            if(readyPlayer1 && readyPlayer2)
+            if (readyPlayer1 && readyPlayer2)
                 Game.Window.Draw(timer);
 
             if (!startGame)
@@ -237,14 +256,27 @@ namespace GameEngine.States
             timer.Update();
 
             if (timer.Second == 59) showMessage = false;
-            
-            if (!gameOver && startGame) player1.UpdateMovement();
-            player1.Update();
-            label1.Position = new Vector2f(player1.Position.X, player1.Position.Y - 30);
 
-            if (!gameOver && startGame) player2.UpdateMovement();
-            player2.Update();
-            label2.Position = new Vector2f(player2.Position.X, player2.Position.Y - 30);
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (!gameOver && startGame) players[i].UpdateMovement();
+                players[i].Update();
+                labels[i].Position = new Vector2f(players[i].Position.X, players[i].Position.Y - 30);
+            }
+
+            if (startGame && !gameOver)
+            {
+                foreach (var player in players)
+                {
+                    foreach (var slime in slimes)
+                    {
+                        if (player.GetGlobalBounds().Intersects(slime.GetGlobalBounds()))
+                        {
+                            slime.Color = player.ActiveColor;
+                        }
+                    }
+                }
+            }
 
             foreach (var s in slimes)
                 s.Update();
@@ -262,7 +294,7 @@ namespace GameEngine.States
 
         private (string levelName, Vector2f position1, Vector2f position2) ExtractLevelInformation(int numberLevel)
         {
-            var inf = levelInformation[numberLevel].Split(new []{' '});
+            var inf = levelInformation[numberLevel].Split(new[] { ' ' });
 
             return (
                 inf[0],

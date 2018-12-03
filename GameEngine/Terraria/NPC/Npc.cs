@@ -41,6 +41,16 @@ namespace Terraria.Gameplay.NPC
             this.world = world;
         }
 
+        public FloatRect GetLocalBounds()
+        {
+            return rect.GetLocalBounds();
+        }
+
+        public FloatRect GetGlobalBounds()
+        {
+            return Transform.TransformRect(GetLocalBounds());
+        }
+
         public void Spawn()
         {
             Position = startPosition;

@@ -28,8 +28,9 @@ namespace Terraria.Gameplay.NPC
         private bool isMove;
         private bool isMoveLeft;
         private bool isMoveRight;
-        private bool isJump;     
+        private bool isJump;
 
+        public Color ActiveColor { get; set; }
 
         RectangleShape rectDirection;
         AnimSprite asHair;              // Волосы
@@ -54,13 +55,13 @@ namespace Terraria.Gameplay.NPC
             Rigt = Keyboard.Key.D;
             Jump = Keyboard.Key.W;
 
-            var texPlayerHair       = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "hair");
-            var texPlayerHead       = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "head");
-            var texPlayerShirt      = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "shirt");
+            var texPlayerHair = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "hair");
+            var texPlayerHead = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "head");
+            var texPlayerShirt = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "shirt");
             var texPlayerUndershirt = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "undershirt");
-            var texPlayerHands      = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "hands");
-            var texPlayerLegs       = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "legs");
-            var texPlayerShoes      = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "shoes");
+            var texPlayerHands = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "hands");
+            var texPlayerLegs = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "legs");
+            var texPlayerShoes = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "shoes");
 
             #region Hair
 
@@ -359,7 +360,8 @@ namespace Terraria.Gameplay.NPC
 
         public override void DrawNPC(RenderTarget target, RenderStates states)
         {
-            //target.Draw(rectDirection, states);
+            if (isRectVisible)
+                target.Draw(rectDirection, states);
             target.Draw(asHead, states);
             target.Draw(asHair, states);
             target.Draw(asShirt, states);
@@ -371,11 +373,11 @@ namespace Terraria.Gameplay.NPC
 
         public void UpdateMovement()
         {
-            isMoveLeft     = Keyboard.IsKeyPressed(Left);
-            isMoveRight    = Keyboard.IsKeyPressed(Rigt);
-            isJump         = Keyboard.IsKeyPressed(Jump);
+            isMoveLeft = Keyboard.IsKeyPressed(Left);
+            isMoveRight = Keyboard.IsKeyPressed(Rigt);
+            isJump = Keyboard.IsKeyPressed(Jump);
 
-            isMove         = isMoveLeft || isMoveRight;
+            isMove = isMoveLeft || isMoveRight;
         }
 
         public void Reset()

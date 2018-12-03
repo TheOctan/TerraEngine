@@ -21,7 +21,9 @@ namespace GameEngine.States
         private StackMenu menu;
         private ScrollBar bar1;
         private ScrollBar bar2;
-        private Lock locker1;
+        private Lock locker;
+        private TextBox textBox1;
+        private TextBox textBox2;
         private Button button1;
 
         public SettingState(Game game) : base(game)
@@ -48,10 +50,18 @@ namespace GameEngine.States
             bar2.WidgetEvent += Bar2_WidgetEvent;
             bar2.Value = game.settings.Value;
 
-            locker1 = new Lock("Full screen mode");
-            locker1.Texture = ResourceHolder.Textures.Get("Widget/lock");
-            locker1.WidgetEvent += Locker1_WidgetEvent;
-            locker1.Value = game.settings.FullScreen;
+            locker = new Lock("Full screen mode");
+            locker.Texture = ResourceHolder.Textures.Get("Widget/lock");
+            locker.WidgetEvent += Locker1_WidgetEvent;
+            locker.Value = game.settings.FullScreen;
+
+            textBox1 = new TextBox(game.settings.NickName1);
+            textBox1.Texture = ResourceHolder.Textures.Get("Widget/textBox");
+            textBox1.WidgetEvent += TextBox1_WidgetEvent;
+
+            textBox2 = new TextBox(game.settings.NickName2);
+            textBox2.Texture = ResourceHolder.Textures.Get("Widget/textBox");
+            textBox2.WidgetEvent += TextBox2_WidgetEvent;
 
             button1 = new Button("Back");
             button1.Texture = ResourceHolder.Textures.Get("Widget/button");
@@ -64,7 +74,9 @@ namespace GameEngine.States
 
             menu.AddWidget(bar1);
             menu.AddWidget(bar2);
-            menu.AddWidget(locker1);
+            menu.AddWidget(locker);
+            menu.AddWidget(textBox1);
+            menu.AddWidget(textBox2);
             menu.AddWidget(button1);
 
             menu.Subscribe();
@@ -96,7 +108,7 @@ namespace GameEngine.States
 
         private void Locker1_WidgetEvent(object sender, WidgetEventArgs e)
         {
-            game.settings.FullScreen = locker1.Value;
+            game.settings.FullScreen = locker.Value;
 
             if(game.settings.FullScreen)
             {
@@ -116,6 +128,16 @@ namespace GameEngine.States
                 game.Subscribe();
                 menu.Subscribe();
             }
+        }
+
+        private void TextBox1_WidgetEvent(object sender, WidgetEventArgs e)
+        {
+            game.settings.NickName1 = e.Message;
+        }
+
+        private void TextBox2_WidgetEvent(object sender, WidgetEventArgs e)
+        {
+            game.settings.NickName2 = e.Message;
         }
 
         private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)

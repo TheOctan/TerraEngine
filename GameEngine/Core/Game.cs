@@ -29,7 +29,9 @@ namespace GameEngine.Core
             {
                 Music = 100,
                 Value = 100,
-                FullScreen = fullScreen
+                FullScreen = fullScreen,
+                NickName1 = "Player 0",
+                NickName2 = "Player 1"
             };
 
             Machine = new StateMachine();

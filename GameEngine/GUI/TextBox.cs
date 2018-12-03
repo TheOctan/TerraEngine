@@ -39,6 +39,7 @@ namespace GameEngine.GUI
                 else
                 {
                     state = WidgetState.active;
+                    WidgetEvent(this, new WidgetEventArgs(modString.ToString(), 0, isActive));
                 }
             }
         }

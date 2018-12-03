@@ -13,6 +13,9 @@ namespace GameEngine.Core
 
         public bool FullScreen { get; set; }
 
+        public string NickName1 { get; set; }
+        public string NickName2 { get; set; }
+
         public Settings()
         {
             

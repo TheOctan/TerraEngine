@@ -151,7 +151,7 @@ namespace GameEngine.States
             {
                 startGame = true;
                 showMessage = true;
-                timer.Reset(0,10);
+                timer.Reset(1);
                 timer.Start();
             }
             else
@@ -193,24 +193,24 @@ namespace GameEngine.States
 
                 players[0].startPosition = level.position1;
                 players[1].startPosition = level.position2;
+
+                foreach (var player in players)
+                {
+                    player.Spawn();
+                }
+
+                for (int i = 0; i < level.countSlimes; i++)
+                {
+                    var s = new NpcSlime(world);
+                    s.startPosition = new Vector2f(Program.Rand.Next(150, 1000), 400);
+                    s.Direction = Program.Rand.Next(0, 2) == 0 ? 1 : -1;
+                    s.Spawn();
+                    slimes.Add(s);
+                }
             }
             catch (FormatException e)
             {
 
-            }
-
-            foreach (var player in players)
-            {
-                player.Spawn();
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                var s = new NpcSlime(world);
-                s.startPosition = new Vector2f(Program.Rand.Next(150, 600), 400);
-                s.Direction = Program.Rand.Next(0, 2) == 0 ? 1 : -1;
-                s.Spawn();
-                slimes.Add(s);
             }
 
             DebugRender.Enable = Game.VisibleCounter;
@@ -291,14 +291,17 @@ namespace GameEngine.States
             return true;
         }
 
-        private (string levelName, Vector2f position1, Vector2f position2) ExtractLevelInformation(int numberLevel)
+        private (string levelName, Vector2f position1, Vector2f position2, int countSlimes) ExtractLevelInformation(int numberLevel)
         {
             var inf = levelInformation[numberLevel].Split(new[] { ' ' });
+
+            if (inf.Length != 6) throw new FormatException();
 
             return (
                 inf[0],
                 new Vector2f(int.Parse(inf[1]), int.Parse(inf[2])),
-                new Vector2f(int.Parse(inf[3]), int.Parse(inf[4]))
+                new Vector2f(int.Parse(inf[3]), int.Parse(inf[4])),
+                int.Parse(inf[5])
                 );
         }
 

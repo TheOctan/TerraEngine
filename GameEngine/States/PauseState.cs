@@ -21,6 +21,8 @@ namespace GameEngine.States
         private StackMenu menu;
         private Button button1;
         private Button button2;
+        private Button button3;
+
 
         public PauseState(Game game) : base(game)
         {
@@ -41,9 +43,13 @@ namespace GameEngine.States
             button1.Texture = ResourceHolder.Textures.Get("Widget/button");
             button1.WidgetEvent += Button1_WidgetEvent;
 
-            button2 = new Button("To menu");
+            button2 = new Button("Restart");
             button2.Texture = ResourceHolder.Textures.Get("Widget/button");
             button2.WidgetEvent += Button2_WidgetEvent;
+
+            button3 = new Button("To menu");
+            button3.Texture = ResourceHolder.Textures.Get("Widget/button");
+            button3.WidgetEvent += Button3_WidgetEvent;
 
             menu = new StackMenu();
             menu.Title = "Pause";
@@ -52,6 +58,7 @@ namespace GameEngine.States
 
             menu.AddWidget(button1);
             menu.AddWidget(button2);
+            menu.AddWidget(button3);
 
             menu.Subscribe();
 
@@ -78,6 +85,14 @@ namespace GameEngine.States
         }
 
         private void Button2_WidgetEvent(object sender, WidgetEventArgs e)
+        {
+            menu.Unsubscribe();
+
+            Game.Machine.PopState();
+            Game.Machine.ChangeState(new StatePlaying(game));
+        }
+
+        private void Button3_WidgetEvent(object sender, WidgetEventArgs e)
         {
             menu.Unsubscribe();
 

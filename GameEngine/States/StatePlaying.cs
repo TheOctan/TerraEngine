@@ -180,7 +180,7 @@ namespace GameEngine.States
                 message.DisplayedString = "Game Over" +
                                           (countSlimes1 > countSlimes2 ?
                                               $"\nWins {labels[0].Text}\nScore {countSlimes1}" :
-                                              countSlimes2 > countSlimes1 ? $"\nWins {labels[0].Text}\nScore {countSlimes1}" : "\nDraw");
+                                              countSlimes2 > countSlimes1 ? $"\nWins {labels[0].Text}\nScore {countSlimes2}" : "\nDraw");
 
                 message.Position = new Vector2f(
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,

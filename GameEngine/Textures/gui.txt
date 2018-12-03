@@ -1,0 +1,10 @@
+Buttons
+Small 40 40
+Large 192 40
+Wide 400 40
+
+Menu
+Left offset 	75
+Up offset	50
+
+offset		16

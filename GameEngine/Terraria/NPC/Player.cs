@@ -15,15 +15,21 @@ namespace Terraria.Gameplay.NPC
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACELERATION = 0.2f;
 
-        public Color HairColor = new Color(255, 0, 0);
-        public Color BodyColor = new Color(255, 229, 186);
-        public Color ShirtColor = new Color(255, 255, 0);
-        public Color LegsColor = new Color(0, 76, 135);
+        public Color HairColor { get => asHair.Color; set => asHair.Color = value; }
+        public Color BodyColor { get => asHead.Color; set { asHead.Color = value; asHands.Color = value; } }
+        public Color ShirtColor { get => asShirt.Color; set { asShirt.Color = value; asUndershirt.Color = value; } }
+        public Color LegsColor { get => asLegs.Color; set => asLegs.Color = value; }
 
         public Keyboard.Key Left { get; set; }
         public Keyboard.Key Rigt { get; set; }
         public Keyboard.Key Jump { get; set; }
-        public Keyboard.Key Attack { get; set; }
+        //public Keyboard.Key Attack { get; set; }
+
+        private bool isMove;
+        private bool isMoveLeft;
+        private bool isMoveRight;
+        private bool isJump;     
+
 
         RectangleShape rectDirection;
         AnimSprite asHair;              // Волосы
@@ -44,6 +50,10 @@ namespace Terraria.Gameplay.NPC
             rectDirection.FillColor = Color.Red;
             rectDirection.Position = new Vector2f(0, rect.Size.Y / 2);
 
+            Left = Keyboard.Key.A;
+            Rigt = Keyboard.Key.D;
+            Jump = Keyboard.Key.W;
+
             var texPlayerHair       = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "hair");
             var texPlayerHead       = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "head");
             var texPlayerShirt      = ResourceHolder.Textures.Get(Content.PLAYER_DIR + "shirt");
@@ -56,7 +66,6 @@ namespace Terraria.Gameplay.NPC
 
             asHair = new AnimSprite(texPlayerHair, new SpriteSheet(1, 14, 0, (int)texPlayerHair.Size.X, (int)texPlayerHair.Size.Y));
             asHair.Position = new Vector2f(0, 19);
-            asHair.Color = HairColor;
             asHair.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -86,7 +95,6 @@ namespace Terraria.Gameplay.NPC
 
             asHead = new AnimSprite(texPlayerHead, new SpriteSheet(1, 20, 0, (int)texPlayerHead.Size.X, (int)texPlayerHead.Size.Y));
             asHead.Position = new Vector2f(0, 19);
-            asHead.Color = BodyColor;
             asHead.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -116,7 +124,6 @@ namespace Terraria.Gameplay.NPC
 
             asShirt = new AnimSprite(texPlayerShirt, new SpriteSheet(1, 20, 0, (int)texPlayerShirt.Size.X, (int)texPlayerShirt.Size.Y));
             asShirt.Position = new Vector2f(0, 19);
-            asShirt.Color = ShirtColor;
             asShirt.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -146,7 +153,6 @@ namespace Terraria.Gameplay.NPC
 
             asUndershirt = new AnimSprite(texPlayerUndershirt, new SpriteSheet(1, 20, 0, (int)texPlayerUndershirt.Size.X, (int)texPlayerUndershirt.Size.Y));
             asUndershirt.Position = new Vector2f(0, 19);
-            asUndershirt.Color = ShirtColor;
             asUndershirt.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -176,7 +182,6 @@ namespace Terraria.Gameplay.NPC
 
             asHands = new AnimSprite(texPlayerHands, new SpriteSheet(1, 20, 0, (int)texPlayerHands.Size.X, (int)texPlayerHands.Size.Y));
             asHands.Position = new Vector2f(0, 19);
-            asHands.Color = BodyColor;
             asHands.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -206,7 +211,6 @@ namespace Terraria.Gameplay.NPC
 
             asLegs = new AnimSprite(texPlayerLegs, new SpriteSheet(1, 20, 0, (int)texPlayerLegs.Size.X, (int)texPlayerLegs.Size.Y));
             asLegs.Position = new Vector2f(0, 19);
-            asLegs.Color = LegsColor;
             asLegs.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -236,7 +240,6 @@ namespace Terraria.Gameplay.NPC
 
             asShoes = new AnimSprite(texPlayerShoes, new SpriteSheet(1, 20, 0, (int)texPlayerShoes.Size.X, (int)texPlayerShoes.Size.Y));
             asShoes.Position = new Vector2f(0, 19);
-            asShoes.Color = Color.Black;
             asShoes.AddAnimation("idle", new Animation(
                 new AnimationFrame(0, 0, 0.1f)
             ));
@@ -261,6 +264,12 @@ namespace Terraria.Gameplay.NPC
             ));
 
             #endregion
+
+            HairColor = new Color(255, 0, 0);
+            BodyColor = new Color(255, 229, 186);
+            ShirtColor = new Color(255, 255, 0);
+            LegsColor = new Color(0, 76, 135);
+            asShoes.Color = Color.Black;
         }
 
         public override void OnKill()
@@ -284,40 +293,6 @@ namespace Terraria.Gameplay.NPC
 
         public override void UpdateNPC()
         {
-            UpdateMovement();
-
-            if (isFly)
-            {
-                asHair.Play("jump");
-                asHead.Play("jump");
-                asShirt.Play("jump");
-                asUndershirt.Play("jump");
-                asHands.Play("jump");
-                asLegs.Play("jump");
-                asShoes.Play("jump");
-            }
-        }
-
-        public override void DrawNPC(RenderTarget target, RenderStates states)
-        {
-            //target.Draw(rectDirection, states);
-            target.Draw(asHead, states);
-            target.Draw(asHair, states);
-            target.Draw(asShirt, states);
-            target.Draw(asUndershirt, states);
-            target.Draw(asHands, states);
-            target.Draw(asLegs, states);
-            target.Draw(asShoes, states);
-        }
-
-        private void UpdateMovement()
-        {
-            bool isMoveLeft = Keyboard.IsKeyPressed(Keyboard.Key.A);
-            bool isMoveRight = Keyboard.IsKeyPressed(Keyboard.Key.D);
-            bool isJump = Keyboard.IsKeyPressed(Keyboard.Key.Space);
-
-            bool isMove = isMoveLeft || isMoveRight;
-
             if (isJump && !isFly && onGround)
             {
                 velocity = new Vector2f(0, -6);
@@ -361,6 +336,7 @@ namespace Terraria.Gameplay.NPC
                 movement = new Vector2f();
 
                 asHair.Play("idle");
+
                 asHead.Play("idle");
                 asShirt.Play("idle");
                 asUndershirt.Play("idle");
@@ -368,6 +344,44 @@ namespace Terraria.Gameplay.NPC
                 asLegs.Play("idle");
                 asShoes.Play("idle");
             }
+
+            if (isFly)
+            {
+                asHair.Play("jump");
+                asHead.Play("jump");
+                asShirt.Play("jump");
+                asUndershirt.Play("jump");
+                asHands.Play("jump");
+                asLegs.Play("jump");
+                asShoes.Play("jump");
+            }
+        }
+
+        public override void DrawNPC(RenderTarget target, RenderStates states)
+        {
+            //target.Draw(rectDirection, states);
+            target.Draw(asHead, states);
+            target.Draw(asHair, states);
+            target.Draw(asShirt, states);
+            target.Draw(asUndershirt, states);
+            target.Draw(asHands, states);
+            target.Draw(asLegs, states);
+            target.Draw(asShoes, states);
+        }
+
+        public void UpdateMovement()
+        {
+            isMoveLeft     = Keyboard.IsKeyPressed(Left);
+            isMoveRight    = Keyboard.IsKeyPressed(Rigt);
+            isJump         = Keyboard.IsKeyPressed(Jump);
+
+            isMove         = isMoveLeft || isMoveRight;
+        }
+
+        public void Reset()
+        {
+            isMove = false;
+            isJump = false;
         }
 
         protected override void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY)

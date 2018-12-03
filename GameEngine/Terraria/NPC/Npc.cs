@@ -100,6 +100,10 @@ namespace Terraria.Gameplay.NPC
                     onGround = true;
                 }
             }
+            else
+            {
+                onGround = false;
+            }
 
             if (upTile != null)
             {

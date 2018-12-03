@@ -1,6 +1,8 @@
 ﻿using GameEngine.Core;
 using GameEngine.States.StateMachine;
 using GameEngine.Util;
+using GameEngine.GUI;
+using GameEngine.Exceptions;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -10,14 +12,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameEngine.Resource;
 using Terraria;
 using Terraria.Gameplay.NPC;
-using GameEngine.GUI;
 
 namespace GameEngine.States
 {
     public class StatePlaying : StateBase
     {
+        private bool gameOver       = false;
+        private bool startGame      = false;
+        private bool readyPlayer1   = false;
+        private bool readyPlayer2   = false;
+        private bool showMessage    = false;
+
+        private Vector2f startPosition1;
+        private Vector2f startPosition2;
+
+        private Text readyPlayer1Text;
+        private Text readyPlayer2Text;
+        private Text message;
+
+        private Timer timer;
+
+        //private Text
+
         private World world;
         private Player player1;
         private Player player2;
@@ -26,27 +45,55 @@ namespace GameEngine.States
 
         private List<NpcSlime> slimes;
 
-        private string[] locations = new string[1];
+        private string[] levelInformation = new string[1];
         private int currentLocation = 0;
         private bool isUpdate = true;
 
         public StatePlaying(Game game) : base(game)
         {
+            readyPlayer1Text = new Text()
+            {
+                DisplayedString = "Player1: Press any key to start",
+                Font = ResourceHolder.Fonts.Get("minecraft"),
+                CharacterSize = 15,
+                Position = new Vector2f(10, 10)
+            };
+            readyPlayer2Text = new Text()
+            {
+                DisplayedString = "Player2: Press any key to start",
+                Font = ResourceHolder.Fonts.Get("minecraft"),
+                CharacterSize = 15
+            };
+            readyPlayer2Text.Position = new Vector2f(Game.Window.Size.X - readyPlayer2Text.GetGlobalBounds().Width - 10, 10);
+
+            message = new Text()
+            {
+                DisplayedString = "GO",
+                Font = ResourceHolder.Fonts.Get("minecraft"),
+                CharacterSize = 100
+            };
+            message.Position = new Vector2f(
+                Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
+                Game.Window.Size.Y / 2 - message.GetLocalBounds().Height);
+
+            timer = new Timer(0, 3);
+            timer.Position = new Vector2f(Game.Window.Size.X - timer.GetGlobalBounds().Width - 25, 10);
+            timer.EndTime += Timer_EndTime;
+
             world = new World();
             player1 = new Player(world)
             {
-                startPosition = new Vector2f(300, 400)
             };
             player2 = new Player(world)
             {
-                startPosition = new Vector2f(700, 300),
                 Jump = Keyboard.Key.Up,
                 Left = Keyboard.Key.Left,
                 Rigt = Keyboard.Key.Right,
                 BodyColor = new Color(135, 84, 56),
                 HairColor = new Color(72, 193, 32),
                 ShirtColor = new Color(255, 128, 0),
-                LegsColor = new Color(130, 0, 130)
+                LegsColor = new Color(130, 0, 130),
+                Scale = new Vector2f(-1, 1)
             };
             slimes = new List<NpcSlime>();
 
@@ -59,8 +106,6 @@ namespace GameEngine.States
             label2.Origin = new Vector2f(label2.Size.X / 2f, 0);
 
             Game.Window.KeyPressed += Window_KeyPressed;
-
-            LoadSettingsFromFile("Levels/levelsOrder.config");
         }
 
         private void Window_KeyPressed(object sender, KeyEventArgs e)
@@ -71,18 +116,53 @@ namespace GameEngine.States
             }
             else if (e.Code == Keyboard.Key.F5)
             {
-                LoadSettingsFromFile("Levels/levelsOrder.config");
-                world.GenerateWorld(locations[currentLocation]);
+                Game.Window.KeyPressed -= Window_KeyPressed;
+                Game.Machine.ChangeState(new StatePlaying(game));
             }
             else if(e.Code == Keyboard.Key.F4)
             {
                 isUpdate = isUpdate ? false : true;
             }
-            else if(e.Code == Keyboard.Key.Escape)
+            else if (e.Code == Keyboard.Key.Escape)
             {
-                Console.WriteLine("Pause State");
                 Game.Window.KeyPressed -= Window_KeyPressed;
                 Game.Machine.PushState(new PauseState(game));
+            }
+            else if ((e.Code == Keyboard.Key.A || e.Code == Keyboard.Key.D || e.Code == Keyboard.Key.W || e.Code == Keyboard.Key.S) && !readyPlayer1)
+            {
+                readyPlayer1 = true;
+                readyPlayer1Text.DisplayedString = "Ready";
+                if(readyPlayer2) timer.Start();
+            }
+            else if ((e.Code == Keyboard.Key.Left || e.Code == Keyboard.Key.Right || e.Code == Keyboard.Key.Up || e.Code == Keyboard.Key.Down) && !readyPlayer2)
+            {
+                readyPlayer2 = true;
+                readyPlayer2Text.DisplayedString = "Ready";
+                if (readyPlayer1 && !startGame) timer.Start();
+            }
+        }
+
+        private void Timer_EndTime(object sender, EventArgs e)
+        {
+            if (!startGame)
+            {
+                startGame = true;
+                showMessage = true;
+                timer.Reset(0,3);
+                timer.Start();
+            }
+            else
+            {
+                gameOver = true;
+                showMessage = true;
+
+                player1.Reset();
+                player2.Reset();
+
+                message.DisplayedString = "Game Over";
+                message.Position = new Vector2f(
+                    Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
+                    Game.Window.Size.Y / 2 - message.GetLocalBounds().Height);
             }
         }
 
@@ -92,8 +172,22 @@ namespace GameEngine.States
 
         public override void Init()
         {
-            world.GenerateWorld(locations[currentLocation]);
-            
+            LoadSettingsFromFile("Levels/levelsOrder.config");
+
+            try
+            {
+                var level = ExtractLevelInformation(currentLocation);
+
+                world.GenerateWorld(level.levelName);
+
+                player1.startPosition = level.position1;
+                player2.startPosition = level.position2;
+            }
+            catch (FormatException e)
+            {
+                
+            }
+
             player1.Spawn();
             player2.Spawn();
 
@@ -120,31 +214,61 @@ namespace GameEngine.States
             foreach (var s in slimes)
                 Game.Window.Draw(s);
 
+            if(readyPlayer1 && readyPlayer2)
+                Game.Window.Draw(timer);
+
+            if (!startGame)
+            {
+                Game.Window.Draw(readyPlayer2Text);
+                Game.Window.Draw(readyPlayer1Text);
+            }
+
+            if (showMessage)
+                Game.Window.Draw(message);
+
+
             DebugRender.Draw(Game.Window);
         }
 
         public override void Update(Time time)
         {
-            if (isUpdate)
-            {
-                player1.Update();
-                label1.Position = new Vector2f(player1.Position.X, player1.Position.Y - 30);
+            if (!isUpdate) return;
 
-                player2.Update();
-                label2.Position = new Vector2f(player2.Position.X, player2.Position.Y - 30);
+            timer.Update();
 
-                foreach (var s in slimes)
-                    s.Update();
-            }
+            if (timer.Second == 59) showMessage = false;
+            
+            if (!gameOver && startGame) player1.UpdateMovement();
+            player1.Update();
+            label1.Position = new Vector2f(player1.Position.X, player1.Position.Y - 30);
+
+            if (!gameOver && startGame) player2.UpdateMovement();
+            player2.Update();
+            label2.Position = new Vector2f(player2.Position.X, player2.Position.Y - 30);
+
+            foreach (var s in slimes)
+                s.Update();
         }
 
         private bool LoadSettingsFromFile(string fileName)
         {
             if (!File.Exists(fileName)) return false;
 
-            locations = File.ReadAllLines(fileName);
+            levelInformation = File.ReadAllLines(fileName);
+
 
             return true;
+        }
+
+        private (string levelName, Vector2f position1, Vector2f position2) ExtractLevelInformation(int numberLevel)
+        {
+            var inf = levelInformation[numberLevel].Split(new []{' '});
+
+            return (
+                inf[0],
+                new Vector2f(int.Parse(inf[1]), int.Parse(inf[2])),
+                new Vector2f(int.Parse(inf[3]), int.Parse(inf[4]))
+                );
         }
 
         public override void Pause()

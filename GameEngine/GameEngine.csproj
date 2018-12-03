@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8A2AF4C4-1403-4BE2-9272-81666DC6AC5D}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>GameEngine</RootNamespace>
     <AssemblyName>GameEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,6 +34,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Terraria.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="sfmlnet-audio-2">
@@ -57,7 +61,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game.cs" />
+    <Compile Include="Core\Game.cs" />
+    <Compile Include="Core\Settings.cs" />
+    <Compile Include="Exceptions\FailLoadLevel.cs" />
+    <Compile Include="GUI\Label.cs" />
+    <Compile Include="States\PauseState.cs" />
+    <Compile Include="Terraria\Animation\AnimSprite.cs" />
+    <Compile Include="Terraria\Animation\SpriteSheet.cs" />
+    <Compile Include="Terraria\Generation\Chunk.cs" />
+    <Compile Include="Terraria\Generation\Tile.cs" />
+    <Compile Include="Terraria\Generation\World.cs" />
+    <Compile Include="Terraria\NPC\Npc.cs" />
+    <Compile Include="Terraria\NPC\NpcSlime.cs" />
+    <Compile Include="Terraria\NPC\Player.cs" />
     <Compile Include="GUI\Button.cs" />
     <Compile Include="GUI\Lock.cs" />
     <Compile Include="GUI\ScrollBar.cs" />
@@ -67,19 +83,25 @@
     <Compile Include="Event\WidgetEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource\Content.cs" />
     <Compile Include="Resource\FontManager.cs" />
     <Compile Include="Resource\ResourceHolder.cs" />
     <Compile Include="Resource\SoundBufferManager.cs" />
     <Compile Include="Resource\TextureManager.cs" />
     <Compile Include="States\MainMenuState.cs" />
+    <Compile Include="States\SettingState.cs" />
     <Compile Include="States\StateMachine\StateBase.cs" />
     <Compile Include="States\StateMachine\StateMachine.cs" />
     <Compile Include="States\StatePlaying.cs" />
+    <Compile Include="Util\DebugRender.cs" />
     <Compile Include="Util\FPSCounter.cs" />
+    <Compile Include="Util\Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Terraria.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

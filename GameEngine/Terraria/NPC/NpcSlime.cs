@@ -17,7 +17,7 @@ namespace Terraria.Gameplay.NPC
         SpriteSheet spriteSheet;
         float waitTimer = 0f;
 
-        public Color Color { get => rect.FillColor; set => rect.FillColor = new Color(value.R, value.G, value.B, 150); }
+        public Color Color { get => new Color(rect.FillColor.R, rect.FillColor.G, rect.FillColor.B); set => rect.FillColor = new Color(value.R, value.G, value.B, 150); }
 
         public NpcSlime(World world) : base(world)
         {

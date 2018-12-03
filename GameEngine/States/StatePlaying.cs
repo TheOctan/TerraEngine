@@ -35,8 +35,6 @@ namespace GameEngine.States
 
         private Timer timer;
 
-        //private Text
-
         private World world;
 
         private List<Player> players;
@@ -153,7 +151,7 @@ namespace GameEngine.States
             {
                 startGame = true;
                 showMessage = true;
-                timer.Reset(1);
+                timer.Reset(0,10);
                 timer.Start();
             }
             else
@@ -169,12 +167,13 @@ namespace GameEngine.States
                 int countSlimes1 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
                 int countSlimes2 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
 
-                message.DisplayedString = "Game Over";
+                message.DisplayedString = "Game Over" + 
+                                          (countSlimes1 > countSlimes2 ? 
+                                              $"\nWins {labels[0].Text}\nScore {countSlimes1}" :
+                                              countSlimes2 > countSlimes1 ? $"\nWins {labels[0].Text}\nScore {countSlimes1}" : "\nDraw");
                 message.Position = new Vector2f(
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
-                    Game.Window.Size.Y / 2 - message.GetLocalBounds().Height);
-
-
+                    Game.Window.Size.Y / 2);
             }
         }
 

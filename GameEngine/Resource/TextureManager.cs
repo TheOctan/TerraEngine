@@ -10,9 +10,9 @@ namespace GameEngine.Resource
 {
     public class TextureManager
     {
-        private string Folder { get; set; }
-        private string Extension { get; set; }
-        private Dictionary<string, Texture> Resources { get; set; }
+        private string Folder                           { get; set; }
+        private string Extension                        { get; set; }
+        private Dictionary<string, Texture> Resources   { get; set; }
 
         public TextureManager(string folder, string extension)
         {

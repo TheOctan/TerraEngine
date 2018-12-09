@@ -8,8 +8,8 @@ namespace GameEngine.Resource
 {
     public static class ResourceHolder
     {
-        public readonly static FontManager          Fonts =  new FontManager("fonts", "ttf");
-        public readonly static TextureManager       Textures = new TextureManager("txrs", "png");
-        public readonly static SoundBufferManager   SoundBuffers = new SoundBufferManager("sfx", "ogg");
+        public readonly static FontManager          Fonts           = new FontManager("fonts", "ttf");
+        public readonly static TextureManager       Textures        = new TextureManager("txrs", "png");
+        public readonly static SoundBufferManager   SoundBuffers    = new SoundBufferManager("sfx", "ogg");
     }
 }

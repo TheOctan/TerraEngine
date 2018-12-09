@@ -10,9 +10,9 @@ namespace GameEngine.Resource
 {
     public class SoundBufferManager
     {
-        private string Folder { get; set; }
-        private string Extension { get; set; }
-        private Dictionary<string, SoundBuffer> Resources { get; set; }
+        private string Folder                               { get; set; }
+        private string Extension                            { get; set; }
+        private Dictionary<string, SoundBuffer> Resources   { get; set; }
 
         public SoundBufferManager(string folder, string extension)
         {

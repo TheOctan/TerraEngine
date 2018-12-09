@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria
+namespace GameEngine.Terraria.AnimationManager
 {
-    class SpriteSheet
+    public class SpriteSheet
     {
         public SpriteSheet(int a, int b, int borderSize, int texW = 0, int texH = 0)
         {
@@ -44,7 +44,5 @@ namespace Terraria
         public int SubHeigt { get; private set; }
 
         readonly int borderSize;
-
-
     }
 }

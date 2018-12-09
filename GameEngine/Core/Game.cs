@@ -81,7 +81,7 @@ namespace GameEngine.Core
 
             while (Window.IsOpen && !Machine.Empty)
             {
-                var state = Machine.GetCurrentState();
+                var state = Machine.CurrentState;
 
                 // get times
                 var time = timer.ElapsedTime;

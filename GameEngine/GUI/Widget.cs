@@ -21,13 +21,13 @@ namespace GameEngine.GUI
             active,
             selected,
             warning
-        };                                                                     // final
+        };
         public enum WidgetSize
         {
             Narrow = 0,
             Small,
             Wide
-        };                                                                      // final
+        };
 
         public Widget(WidgetSize size)
         {
@@ -117,11 +117,11 @@ namespace GameEngine.GUI
         public FloatRect GetLocalBounds()
         {
             return rect.GetLocalBounds();
-        }                                                           // final
+        }
         public FloatRect GetGlobalBounds()
         {
             return Transform.TransformRect(GetLocalBounds());
-        }                                                          // final
+        }
 
         public void Draw(RenderTarget target, RenderStates states)
         {
@@ -193,14 +193,12 @@ namespace GameEngine.GUI
 
         public abstract event EventHandler<WidgetEventArgs>  WidgetEvent;
 
-        protected Vector2f          localMousePos;                                                     // final
-        protected Vector2f          gloabalMousePos;                                                   // final
-        protected RectangleShape    rect;                                                              // final
-        protected Text              text;                                                              // final
+        protected Vector2f          localMousePos;
+        protected Vector2f          gloabalMousePos;
+        protected RectangleShape    rect;
+        protected Text              text;
 
         protected WidgetState       state;
-        //public event EventHandler                   MouseEntered;
-        //public event EventHandler                   MouseLeft;
 
         protected bool isActive;
         protected bool isClicked;

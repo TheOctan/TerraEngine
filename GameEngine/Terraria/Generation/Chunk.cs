@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria
+namespace GameEngine.Terraria.Generation
 {
-    class Chunk : Transformable, Drawable
+    public class Chunk : Transformable, Drawable
     {
         public const int CHUNK_SIZE = 25;
 

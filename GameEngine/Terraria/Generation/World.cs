@@ -2,6 +2,7 @@
 using GameEngine.Resource;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria
+namespace GameEngine.Terraria.Generation
 {
-    class World : Transformable, Drawable
+    public class World : Transformable, Drawable
     {
         public const int WORLD_SIZE = 5;
 
@@ -40,7 +41,7 @@ namespace Terraria
             ResetWorld();
         }
 
-        private void UpdateBackgroud(object sender, SFML.Window.SizeEventArgs e)
+        private void UpdateBackgroud(object sender, SizeEventArgs e)
         {
             sky.Size = new Vector2f(e.Width, e.Height);
             forest.Size = new Vector2f(e.Width, e.Height / 2);

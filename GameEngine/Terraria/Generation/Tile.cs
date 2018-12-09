@@ -1,5 +1,5 @@
-﻿using GameEngine;
-using GameEngine.Resource;
+﻿using GameEngine.Resource;
+using GameEngine.Terraria.AnimationManager;
 using SFML.Graphics;
 using SFML.System;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria
+namespace GameEngine.Terraria.Generation
 {
     public enum TileType
     {

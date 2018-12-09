@@ -13,8 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GameEngine.Resource;
-using Terraria;
-using Terraria.Gameplay.NPC;
+using GameEngine.Terraria.Generation;
+using GameEngine.Terraria.NPC;
 
 namespace GameEngine.States
 {
@@ -25,9 +25,6 @@ namespace GameEngine.States
         private bool readyPlayer1 = false;
         private bool readyPlayer2 = false;
         private bool showMessage = false;
-
-        private Vector2f startPosition1;
-        private Vector2f startPosition2;
 
         private Text readyPlayer1Text;
         private Text readyPlayer2Text;
@@ -219,7 +216,7 @@ namespace GameEngine.States
                     slimes.Add(s);
                 }
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
 
             }

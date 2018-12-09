@@ -8,8 +8,9 @@ namespace GameEngine.States.StateMachine
 {
     public class StateMachine
     {
-        public bool Empty => states.Count == 0;
-        public int Count => states.Count;
+        public bool Empty               => states.Count == 0;
+        public int Count                => states.Count;
+        public StateBase CurrentState   => states.Peek();
 
         public StateMachine()
         {
@@ -30,11 +31,6 @@ namespace GameEngine.States.StateMachine
         {
             change = state;
             shouldChange = true;
-        }
-
-        public StateBase GetCurrentState()
-        {
-            return states.Peek();
         }
 
         public void Reset()

@@ -66,12 +66,14 @@
     <Compile Include="Exceptions\FailLoadLevel.cs" />
     <Compile Include="GUI\Label.cs" />
     <Compile Include="States\PauseState.cs" />
-    <Compile Include="Terraria\Animation\AnimSprite.cs" />
-    <Compile Include="Terraria\Animation\SpriteSheet.cs" />
+    <Compile Include="Terraria\AnimationManager\Animation.cs" />
+    <Compile Include="Terraria\AnimationManager\AnimationFrame.cs" />
+    <Compile Include="Terraria\AnimationManager\AnimSprite.cs" />
+    <Compile Include="Terraria\AnimationManager\SpriteSheet.cs" />
     <Compile Include="Terraria\Generation\Chunk.cs" />
     <Compile Include="Terraria\Generation\Tile.cs" />
     <Compile Include="Terraria\Generation\World.cs" />
-    <Compile Include="Terraria\NPC\Npc.cs" />
+    <Compile Include="Terraria\NPC\Entity.cs" />
     <Compile Include="Terraria\NPC\NpcSlime.cs" />
     <Compile Include="Terraria\NPC\Player.cs" />
     <Compile Include="GUI\Button.cs" />

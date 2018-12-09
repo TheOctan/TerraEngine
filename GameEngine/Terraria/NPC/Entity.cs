@@ -1,4 +1,5 @@
 ﻿using GameEngine.Core;
+using GameEngine.Terraria.Generation;
 using GameEngine.Util;
 using SFML.Graphics;
 using SFML.System;
@@ -8,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria.Gameplay.NPC
+namespace GameEngine.Terraria.NPC
 {
-    abstract class Npc : Transformable, Drawable
+    public abstract class Entity : Transformable, Drawable
     {
         public Vector2f startPosition;
 
@@ -36,7 +37,7 @@ namespace Terraria.Gameplay.NPC
             }
         }
 
-        public Npc(World world)
+        public Entity(World world)
         {
             this.world = world;
         }
@@ -139,7 +140,7 @@ namespace Terraria.Gameplay.NPC
         }
 
         protected abstract void UpdatePhysicsWall(FloatRect playerRect, int pX, int pY);
-        protected void checkWall(FloatRect playerRect, int pX, int pY, Tile[] walls)
+        protected void CheckWall(FloatRect playerRect, int pX, int pY, Tile[] walls)
         {
             foreach (Tile tile in walls)
             {
@@ -170,7 +171,6 @@ namespace Terraria.Gameplay.NPC
                 }
             }
         }
-
 
         public abstract void OnKill();
         public abstract void OnWallCollided();

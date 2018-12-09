@@ -1,4 +1,6 @@
 ﻿using GameEngine.Resource;
+using GameEngine.Terraria.AnimationManager;
+using GameEngine.Terraria.Generation;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -8,9 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Terraria.Gameplay.NPC
+namespace GameEngine.Terraria.NPC
 {
-    class Player : Npc
+    public class Player : Entity
     {
         public const float PLAYER_MOVE_SPEED = 4f;
         public const float PLAYER_MOVE_SPEED_ACELERATION = 0.2f;
@@ -398,7 +400,7 @@ namespace Terraria.Gameplay.NPC
                 world.GetTile(pX + 1, pY - 3)
             };
 
-            checkWall(playerRect, pX, pY, walls);
+            CheckWall(playerRect, pX, pY, walls);
         }
     }
 }

@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using GameEngine;
 using GameEngine.Resource;
+using GameEngine.Terraria.AnimationManager;
+using GameEngine.Terraria.Generation;
 using SFML.Graphics;
 using SFML.System;
 
-namespace Terraria.Gameplay.NPC
+namespace GameEngine.Terraria.NPC
 {
-    class NpcSlime : Npc
+    public class NpcSlime : Entity
     {
         const float TIME_WAIT_JUMP = 1f;
 
@@ -85,7 +87,7 @@ namespace Terraria.Gameplay.NPC
                 //world.GetTile(pX + 1, pY - 3)
             };
 
-            checkWall(playerRect, pX, pY, walls);
+            CheckWall(playerRect, pX, pY, walls);
         }
     }
 }

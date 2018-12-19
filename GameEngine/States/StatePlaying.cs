@@ -171,13 +171,13 @@ namespace GameEngine.States
                 rect.Size       = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y / 2f);
                 rect.Position   = new Vector2f(0, Game.Window.Size.Y - rect.GetGlobalBounds().Height);
 
-                int countSlimes1 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
-                int countSlimes2 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
+                int countSlimes0 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
+                int countSlimes1 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
 
                 message.DisplayedString = "Game Over" +
-                                          (countSlimes1 > countSlimes2 ?
-                                              $"\nWins {labels[0].Text}\nScore {countSlimes1}" :
-                                              countSlimes2 > countSlimes1 ? $"\nWins {labels[0].Text}\nScore {countSlimes2}" : "\nDraw");
+                                          (countSlimes0 > countSlimes1 ?
+                                              $"\nWins {labels[0].Text}\nScore {countSlimes0}" :
+                                              countSlimes1 > countSlimes0 ? $"\nWins {labels[1].Text}\nScore {countSlimes1}" : "\nDraw");
 
                 message.Position = new Vector2f(
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
@@ -248,8 +248,6 @@ namespace GameEngine.States
                 Game.Window.Draw(readyPlayer2Text);
                 Game.Window.Draw(readyPlayer1Text);
             }
-
-
 
             if (showMessage)
             {

@@ -26,12 +26,13 @@ namespace GameEngine.Core
         public Game(IConfigurator configurator)
         {
 			config = configurator;
+			config.LoadConfiguration();
 
             Machine = new StateMachine();
 
             Window = config.FullScreen ? 
-                new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) 
-                : new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Close);
+                new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) : 
+				new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Close);
 
             Window.SetFramerateLimit(60);
 

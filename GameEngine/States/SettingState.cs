@@ -144,6 +144,7 @@ namespace GameEngine.States
         {
             menu.Unsubscribe();
 
+			game.config.SaveConfiguration();
             Game.Machine.PopState();
         }
     }

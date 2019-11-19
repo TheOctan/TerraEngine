@@ -104,8 +104,8 @@ namespace GameEngine.States
 
             labels = new List<Label>()
             {
-                new Label() { Text = game.settings.NickName1 },
-                new Label() { Text = game.settings.NickName2 }
+                new Label() { Text = game.config.NickName1 },
+                new Label() { Text = game.config.NickName2 }
             };
             foreach (var label in labels)
             {

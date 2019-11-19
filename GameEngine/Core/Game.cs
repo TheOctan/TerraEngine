@@ -20,23 +20,16 @@ namespace GameEngine.Core
         public static readonly string GameName = "\nterraria demo_0.0.5";
         public static bool VisibleCounter = false;
 
-        public Settings settings;
+        public IConfigurator config;
         private FPSCounter counter;
 
-        public Game(bool fullScreen = true)
+        public Game(IConfigurator configurator)
         {
-            settings = new Settings()
-            {
-                Music = 100,
-                Value = 100,
-                FullScreen = fullScreen,
-                NickName1 = "Player 0",
-                NickName2 = "Player 1"
-            };
+			config = configurator;
 
             Machine = new StateMachine();
 
-            Window = fullScreen ? 
+            Window = config.FullScreen ? 
                 new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) 
                 : new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Close);
 

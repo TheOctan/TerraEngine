@@ -18,5 +18,6 @@ namespace GameEngine.Core
 
 		void LoadConfiguration();
 		void SaveConfiguration();
+		void ResetConfiguration();
 	}
 }

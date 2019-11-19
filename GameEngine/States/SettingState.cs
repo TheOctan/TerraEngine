@@ -25,6 +25,7 @@ namespace GameEngine.States
         private TextBox textBox1;
         private TextBox textBox2;
         private Button button1;
+		private Button button2;
 
         public SettingState(Game game) : base(game)
         {
@@ -67,7 +68,11 @@ namespace GameEngine.States
             button1.Texture = ResourceHolder.Textures.Get("Widget/button");
             button1.WidgetEvent += Button1_WidgetEvent;
 
-            menu = new StackMenu();
+			button2 = new Button("Reset");
+			button2.Texture = ResourceHolder.Textures.Get("Widget/button");
+			button2.WidgetEvent += Button2_WidgetEvent;
+
+			menu = new StackMenu();
             menu.Title = "Settings";
             menu.Texture = ResourceHolder.Textures.Get("Widget/demo_background");
             menu.FillColor = new Color(0, 0, 0, 150);
@@ -77,6 +82,7 @@ namespace GameEngine.States
             menu.AddWidget(locker);
             menu.AddWidget(textBox1);
             menu.AddWidget(textBox2);
+			menu.AddWidget(button2);
             menu.AddWidget(button1);
 
             menu.Subscribe();
@@ -85,7 +91,17 @@ namespace GameEngine.States
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
-        public override void Render(float alpha)
+		private void Button2_WidgetEvent(object sender, WidgetEventArgs e)
+		{
+			game.config.ResetConfiguration();
+
+			bar1.Value = game.config.Music;
+			bar2.Value = game.config.Value;
+			textBox1.Text = game.config.NickName1;
+			textBox2.Text = game.config.NickName2;
+		}
+
+		public override void Render(float alpha)
         {
             Game.Window.Draw(background);
             Game.Window.Draw(menu);

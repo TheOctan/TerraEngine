@@ -15,7 +15,8 @@ namespace GameEngine.Core.impl
 		public string NickName1 { get; set; }
 		public string NickName2 { get; set; }
 
-		public static readonly string rootModule			= @"Software\MyTerraria\Settings";
+		public static readonly string rootModule			= @"Software\MyTerraria";
+		public static readonly string settingsModule		= @"Software\MyTerraria\Settings";
 
 		public static readonly string musicSettingKey		= "Music";
 		public static readonly string valueSettingKey		= "Value";
@@ -34,7 +35,7 @@ namespace GameEngine.Core.impl
 			try
 			{
 				RegistryKey currentConfig = Registry.CurrentUser;
-				RegistryKey settings = OpenOrCreateSubKey(currentConfig, rootModule);
+				RegistryKey settings = OpenOrCreateSubKey(currentConfig, settingsModule);
 
 				Music = (int)settings.GetValue(musicSettingKey, defaultMusic);
 				Value = (int)settings.GetValue(valueSettingKey, defaultMusic);
@@ -55,7 +56,7 @@ namespace GameEngine.Core.impl
 			try
 			{
 				RegistryKey currentConfig	= Registry.CurrentUser;
-				RegistryKey settings		= OpenOrCreateSubKey(currentConfig, rootModule);
+				RegistryKey settings		= OpenOrCreateSubKey(currentConfig, settingsModule);
 
 				settings.SetValue(musicSettingKey, Music);
 				settings.SetValue(valueSettingKey, Value);
@@ -67,8 +68,25 @@ namespace GameEngine.Core.impl
 			}
 			catch (Exception)
 			{
-
+				
 			}
+		}
+
+		public void ResetConfiguration()
+		{
+			RegistryKey currentConfig = Registry.CurrentUser;
+			RegistryKey settings = currentConfig.OpenSubKey(settingsModule);
+
+			if (settings != null)
+			{
+				currentConfig.DeleteSubKeyTree(rootModule);
+			}
+
+			Music = defaultMusic;
+			Value = defaultValue;
+			FullScreen = defaultFullScreen;
+			NickName1 = defaultNickName1;
+			NickName2 = defaultNickName2;
 		}
 
 		private RegistryKey OpenOrCreateSubKey(RegistryKey key, string name)

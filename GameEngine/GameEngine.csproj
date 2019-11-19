@@ -62,7 +62,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Game.cs" />
-    <Compile Include="Core\Settings.cs" />
+    <Compile Include="Core\IConfigurator.cs" />
+    <Compile Include="Core\impl\ReestryConfigurator.cs" />
     <Compile Include="Exceptions\FailLoadLevel.cs" />
     <Compile Include="GUI\Label.cs" />
     <Compile Include="States\PauseState.cs" />

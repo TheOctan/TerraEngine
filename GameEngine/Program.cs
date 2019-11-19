@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using GameEngine.Core;
+using GameEngine.Core.impl;
 
 namespace GameEngine
 {
@@ -16,7 +17,8 @@ namespace GameEngine
         {
             Rand = new Random();
 
-            Game game = new Game();
+			Game game = new Game(new ReestryConfigurator());
+
             game.Run();
         }
     }

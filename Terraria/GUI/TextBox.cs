@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using GameEngine.Core;
 using GameEngine.Event;
 using SFML.Graphics;
 using SFML.System;
@@ -12,108 +10,108 @@ namespace GameEngine.GUI
 {
     public class TextBox : Widget
     {
-        public override event EventHandler<WidgetEventArgs> WidgetEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<WidgetEventArgs> TextChangedEvent = (object sender, WidgetEventArgs e) => { };
 
         private StringBuilder modString;
 
         public TextBox() : this("")
-        {
-
-        }
+        {}
         public TextBox(string str) : base(WidgetSize.Wide)
         {
             modString = new StringBuilder();
             rect.Size = new Vector2f(dimensions[(int)WidgetSize.Wide], 64);
-
             Text = str;
+
+            NotActiveRect = new IntRect(0, 0, 160, 32);
+            ActiveRect = new IntRect(0, 32, 160, 32);
+            SelectedRect = new IntRect(0, 64, 160, 32);
+
+            NotActiveTextColor = Color.Black;
         }
 
-        protected override void Window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        public override void Subscribe()
         {
-            if(e.Button == Mouse.Button.Left)
+            base.Subscribe();
+
+            Game.Window.TextEntered += OnTextEntered;
+            Game.Window.KeyPressed += OnKeyPressed;
+        }
+        public override void Unsubscribe()
+        {
+            base.Unsubscribe();
+
+            Game.Window.TextEntered -= OnTextEntered;
+            Game.Window.KeyPressed -= OnKeyPressed;
+        }
+
+        protected override void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            if (!IsActive)
+                return;
+
+            if (e.Button == Mouse.Button.Left)
             {
-                if(isEntered)
+                if (isEntered)
                 {
                     state = WidgetState.selected;
                 }
                 else
                 {
                     state = WidgetState.active;
-                    WidgetEvent(this, new WidgetEventArgs(modString.ToString(), 0, isActive));
+                    TextChangedEvent(this, new WidgetEventArgs(modString.ToString(), 0, IsActive));
                 }
             }
         }
-        protected override void Window_KeyPressed(object sender, KeyEventArgs e)
+        protected void OnKeyPressed(object sender, KeyEventArgs e)
         {
-            if(e.Code == Keyboard.Key.Return)
-                if(state == WidgetState.selected)
+            if (!IsActive)
+                return;
+
+            if (e.Code == Keyboard.Key.Enter)
+            {
+                if (state == WidgetState.selected)
                 {
                     state = WidgetState.active;
-                    WidgetEvent(this, new WidgetEventArgs(modString.ToString(), 0, isActive));
+                    TextChangedEvent(this, new WidgetEventArgs(modString.ToString(), 0, IsActive));
                 }
+            }
         }
-        protected override void Window_TextEntered(object sender, TextEventArgs e)
+        protected void OnTextEntered(object sender, TextEventArgs e)
         {
-            if(state == WidgetState.selected)
+            if (!IsActive)
+                return;
+
+            if (state == WidgetState.selected)
             {
                 string keyCode = e.Unicode;
 
-                if(IsValidCharacter(keyCode))
+                if (IsValidCharacter(keyCode))
                 {
-                    if(text.GetGlobalBounds().Width + 50 <= rect.GetGlobalBounds().Width)
+                    if (text.GetGlobalBounds().Width + 50 <= rect.GetGlobalBounds().Width)
                     {
                         modString.Append(keyCode);
                     }
                 }
-                else if(IsBackspace(keyCode))
+                else if (IsBackspace(keyCode))
                 {
-                    if(modString.Length > 0)
+                    if (modString.Length > 0)
                         modString.Remove(modString.Length - 1, 1);
                 }
                 text.DisplayedString = modString.ToString();
             }
         }
-
-        protected override void Reset()
+        public override void Reset()
         {
-            rect.FillColor = Color.White;
+            base.Reset();
             rect.OutlineColor = Color.Transparent;
             rect.OutlineThickness = 0;
         }
+
         protected override void UpdateText()
         {
             text.Position = new Vector2f(15, rect.GetGlobalBounds().Height / 2.5f);
             modString = new StringBuilder(text.DisplayedString);
         }
-
-        protected override void NotActiveState()
-        {
-            if (rect.Texture != null)
-                rect.TextureRect = new IntRect(0, 0, 160, 32);
-            else
-                rect.FillColor = new Color(22, 192, 82);
-
-            text.Color = Color.Black;
-        }
-        protected override void ActiveState()
-        {
-            if (rect.Texture != null)
-                rect.TextureRect = new IntRect(0, 32, 160, 32);
-            else
-                rect.FillColor = new Color(52, 152, 219);
-
-            text.Color = Color.White;
-        }
-        protected override void SelectedState()
-        {
-            if (rect.Texture != null)
-                rect.TextureRect = new IntRect(0, 64, 160, 32);
-            else
-                rect.FillColor = new Color(45, 107, 236);
-
-            text.Color = Color.White;
-        }
-
         private bool IsValidCharacter(string keyCode)
         {
             return keyCode[0] >= 48 && keyCode[0] <= 57 ||    // Numbers

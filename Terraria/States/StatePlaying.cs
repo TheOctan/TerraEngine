@@ -2,7 +2,6 @@
 using GameEngine.States.StateMachine;
 using GameEngine.Util;
 using GameEngine.GUI;
-using GameEngine.Exceptions;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -10,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GameEngine.Resource;
 using GameEngine.Terraria.Generation;
 using GameEngine.Terraria.NPC;
@@ -78,7 +75,7 @@ namespace GameEngine.States
 
             timer = new Timer(0, 3);
             timer.Position = new Vector2f(Game.Window.Size.X / 2f - timer.GetGlobalBounds().Width / 2f, 10);
-            timer.EndTime += Timer_EndTime;
+            timer.EndTime += OnTimerEndTime;
 
             world = new World();
             slimes = new List<NpcSlime>();
@@ -112,10 +109,10 @@ namespace GameEngine.States
                 label.Origin = new Vector2f(label.Size.X / 2f, 0);
             }
 
-            Game.Window.KeyPressed += Window_KeyPressed;
+            Game.Window.KeyPressed += OnKeyPressed;
         }
 
-        private void Window_KeyPressed(object sender, KeyEventArgs e)
+        private void OnKeyPressed(object sender, KeyEventArgs e)
         {
             if (e.Code == Keyboard.Key.Tab)
             {
@@ -123,8 +120,8 @@ namespace GameEngine.States
             }
             else if (e.Code == Keyboard.Key.F5)
             {
-                Game.Window.KeyPressed -= Window_KeyPressed;
-                Game.Machine.ChangeState(new StatePlaying(game));
+                Game.Window.KeyPressed -= OnKeyPressed;
+                Game.stateMachine.ChangeState(new StatePlaying(game));
             }
             else if (e.Code == Keyboard.Key.F4)
             {
@@ -132,8 +129,8 @@ namespace GameEngine.States
             }
             else if (e.Code == Keyboard.Key.Escape)
             {
-                Game.Window.KeyPressed -= Window_KeyPressed;
-                Game.Machine.PushState(new PauseState(game));
+                Game.Window.KeyPressed -= OnKeyPressed;
+                Game.stateMachine.PushState(new PauseState(game));
             }
             else if ((e.Code == Keyboard.Key.A || e.Code == Keyboard.Key.D || e.Code == Keyboard.Key.W || e.Code == Keyboard.Key.S) && !readyPlayer1)
             {
@@ -149,7 +146,7 @@ namespace GameEngine.States
             }
         }
 
-        private void Timer_EndTime(object sender, EventArgs e)
+        private void OnTimerEndTime(object sender, EventArgs e)
         {
             if (!startGame)
             {
@@ -168,8 +165,8 @@ namespace GameEngine.States
                     player.Reset();
                 }
 
-                rect.Size       = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y / 2f);
-                rect.Position   = new Vector2f(0, Game.Window.Size.Y - rect.GetGlobalBounds().Height);
+                rect.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y / 2f);
+                rect.Position = new Vector2f(0, Game.Window.Size.Y - rect.GetGlobalBounds().Height);
 
                 int countSlimes0 = slimes.Where(slime => slime.Color == players[0].ActiveColor).Count();
                 int countSlimes1 = slimes.Where(slime => slime.Color == players[1].ActiveColor).Count();
@@ -183,10 +180,6 @@ namespace GameEngine.States
                     Game.Window.Size.X / 2 - message.GetGlobalBounds().Width / 2,
                     Game.Window.Size.Y / 2);
             }
-        }
-
-        public override void HandleInput()
-        {
         }
 
         public override void Init()
@@ -287,16 +280,19 @@ namespace GameEngine.States
                 }
             }
 
-            foreach (var s in slimes)
-                s.Update();
+            foreach (var slime in slimes)
+			{
+                slime.Update();
+            }
         }
 
         private bool LoadSettingsFromFile(string fileName)
         {
-            if (!File.Exists(fileName)) return false;
-
+            if (!File.Exists(fileName))
+			{
+                return false;
+            }
             levelInformation = File.ReadAllLines(fileName);
-
 
             return true;
         }
@@ -317,12 +313,12 @@ namespace GameEngine.States
 
         public override void Pause()
         {
-            Game.Window.KeyPressed -= Window_KeyPressed;
+            Game.Window.KeyPressed -= OnKeyPressed;
         }
 
         public override void Resume()
         {
-            Game.Window.KeyPressed += Window_KeyPressed;
+            Game.Window.KeyPressed += OnKeyPressed;
         }
     }
 }

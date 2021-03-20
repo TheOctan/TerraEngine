@@ -5,12 +5,6 @@ using GameEngine.Resource;
 using GameEngine.States.StateMachine;
 using SFML.Graphics;
 using SFML.System;
-using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.States
 {
@@ -19,19 +13,12 @@ namespace GameEngine.States
         private RectangleShape background;
 
         private StackMenu menu;
-        private Button button1;
-        private Button button2;
-        private Button button3;
-
+        private Button backButton;
+        private Button restartButton;
+        private Button menuButton;
 
         public PauseState(Game game) : base(game)
-        {
-        }
-
-        public override void HandleInput()
-        {
-
-        }
+        {}
 
         public override void Init()
         {
@@ -39,26 +26,26 @@ namespace GameEngine.States
             background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
             background.Texture = ResourceHolder.Textures.Get("Background/orig");
 
-            button1 = new Button("Back");
-            button1.Texture = ResourceHolder.Textures.Get("Widget/button");
-            button1.WidgetEvent += Button1_WidgetEvent;
+            backButton = new Button("Back");
+            backButton.Texture = ResourceHolder.Textures.Get("Widget/button");
+            backButton.PressedEvent += OnBackButtonPressed;
 
-            button2 = new Button("Restart");
-            button2.Texture = ResourceHolder.Textures.Get("Widget/button");
-            button2.WidgetEvent += Button2_WidgetEvent;
+            restartButton = new Button("Restart");
+            restartButton.Texture = ResourceHolder.Textures.Get("Widget/button");
+            restartButton.PressedEvent += OnRestartButtonPressed;
 
-            button3 = new Button("To menu");
-            button3.Texture = ResourceHolder.Textures.Get("Widget/button");
-            button3.WidgetEvent += Button3_WidgetEvent;
+            menuButton = new Button("To menu");
+            menuButton.Texture = ResourceHolder.Textures.Get("Widget/button");
+            menuButton.PressedEvent += OnMenuButtonPressed;
 
             menu = new StackMenu();
             menu.Title = "Pause";
             menu.Texture = ResourceHolder.Textures.Get("Widget/demo_background");
             menu.FillColor = new Color(0, 0, 0, 150);
 
-            menu.AddWidget(button1);
-            menu.AddWidget(button2);
-            menu.AddWidget(button3);
+            menu.AddWidget(backButton);
+            menu.AddWidget(restartButton);
+            menu.AddWidget(menuButton);
 
             menu.Subscribe();
 
@@ -77,27 +64,27 @@ namespace GameEngine.States
             menu.Update();
         }
 
-        private void Button1_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnBackButtonPressed(object sender, WidgetEventArgs e)
         {
             menu.Unsubscribe();
 
-            Game.Machine.PopState();
+            Game.stateMachine.PopState();
         }
 
-        private void Button2_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnRestartButtonPressed(object sender, WidgetEventArgs e)
         {
             menu.Unsubscribe();
 
-            Game.Machine.PopState();
-            Game.Machine.ChangeState(new StatePlaying(game));
+            Game.stateMachine.PopState();
+            Game.stateMachine.ChangeState(new StatePlaying(game));
         }
 
-        private void Button3_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnMenuButtonPressed(object sender, WidgetEventArgs e)
         {
             menu.Unsubscribe();
 
-            Game.Machine.PopState();
-            Game.Machine.ChangeState(new MainMenuState(game));
+            Game.stateMachine.PopState();
+            Game.stateMachine.ChangeState(new MainMenuState(game));
         }
     }
 }

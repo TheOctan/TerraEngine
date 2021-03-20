@@ -2,10 +2,6 @@
 using SFML.Graphics;
 using SFML.System;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.Util
 {
@@ -17,12 +13,12 @@ namespace GameEngine.Util
         public int Second => seconds % 60;
         public Color Color
         {
-            get => point.Color;
+            get => point.FillColor;
             set
             {
-                firstDischarge.Color = value;
-                point.Color = value;
-                secondDischarge.Color = value;
+                firstDischarge.FillColor = value;
+                point.FillColor = value;
+                secondDischarge.FillColor = value;
             }
         }
 
@@ -33,16 +29,11 @@ namespace GameEngine.Util
         private Text secondDischarge;
 
         private RectangleShape rect;
-
         private Clock timer;
-
         private bool isUpdate;
 
         public Timer() : this(0)
-        {
-
-        }
-
+        {}
         public Timer(int minute, int second = 0)
         {
             isUpdate = false;
@@ -83,30 +74,25 @@ namespace GameEngine.Util
         {
             return rect.GetLocalBounds();
         }
-
         public FloatRect GetGlobalBounds()
         {
             return Transform.TransformRect(GetLocalBounds());
         }
-
         public void Start()
         {
             isUpdate = true;
             timer.Restart();
         }
-
         public void Stop()
         {
             isUpdate = false;
         }
-
         public void Reset(int minute, int second = 0)
         {
             isUpdate = false;
             seconds = minute * 60 + second;
             Display();
         }
-
         public void Update()
         {
             if (!isUpdate) return;
@@ -133,7 +119,6 @@ namespace GameEngine.Util
             }
 
         }
-
         private void Display()
         {
             int minute = seconds / 60;
@@ -142,7 +127,6 @@ namespace GameEngine.Util
             firstDischarge.DisplayedString = minute >= 10 ? minute.ToString() : "0" + minute.ToString();
             secondDischarge.DisplayedString = second >= 10 ? second.ToString() : "0" + second.ToString();
         }
-
         public void Draw(RenderTarget target, RenderStates states)
         {
             states.Transform *= Transform;

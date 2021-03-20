@@ -30,7 +30,7 @@ namespace GameEngine.Util
             text = new Text()
             {
                 Position = new Vector2f(5, 5),
-                Color = Color.White,
+                FillColor = Color.White,
                 Font = ResourceHolder.Fonts.Get("arial"),
                 CharacterSize = 15
             };

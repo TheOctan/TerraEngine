@@ -1,11 +1,6 @@
 ﻿using GameEngine.Resource;
 using SFML.Graphics;
 using SFML.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.GUI
 {
@@ -30,7 +25,7 @@ namespace GameEngine.GUI
             message = new Text();
             message.Font = ResourceHolder.Fonts.Get("arial");
             message.CharacterSize = 15;
-            
+
             frame = new RectangleShape(new Vector2f(90, 20));
             frame.FillColor = new Color(0, 0, 0, 100);
         }

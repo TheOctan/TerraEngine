@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GameEngine.Event;
 using SFML.Graphics;
 using SFML.System;
@@ -12,23 +8,41 @@ namespace GameEngine.GUI
 {
     public class Lock : Widget
     {
-        public override event EventHandler<WidgetEventArgs> WidgetEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<WidgetEventArgs> PressedEvent = (object sender, WidgetEventArgs e) => { };
 
+        public Vector2i UVoffset { get; set; }
+        public Vector2i TextureSize { get; set; }
         public bool Value { get => isLocked; set { isLocked = value; UpdateState(); } }
+        public override Texture Texture
+        {
+            get => base.Texture;
+            set
+            {
+                locker.Texture = value;
+                rect.Texture = value;
+                UpdateState();
+            }
+        }
 
         private bool isLocked;
         private RectangleShape locker;
 
-        public Lock() : this("")
-        {
+        public Color ActiveLockedColor { get; set; } = new Color(22, 192, 82);
+        public Color SelectedLockedColor { get; set; } = new Color(50, 196, 19);
 
-        }
+        public Lock() : this("")
+        {}
         public Lock(string str, WidgetSize size = WidgetSize.Wide) : base(size)
         {
+            TextureSize = new Vector2i(20, 20);
+            UVoffset = new Vector2i(0, 20);
+            NotActiveColor = new Color(244, 183, 19);
+            rect.TextureRect = NotActiveRect;
+
             locker = new RectangleShape()
             {
                 Size = new Vector2f(40, 40),
-                FillColor = new Color(52, 152, 219),
+                FillColor = ActiveColor,
                 OutlineColor = Color.Black,
                 OutlineThickness = outlineThickness
             };
@@ -36,29 +50,22 @@ namespace GameEngine.GUI
             Text = str;
         }
 
-        public override Texture Texture
+        public override void Reset()
         {
-            get => base.Texture;
-            set
-            {
-                Reset();
-
-                locker.Texture = value;
-                rect.Texture = value;
-                rect.TextureRect = new IntRect(0, 20 * 3, 200, 20);
-
-                UpdateState();
-            }
+            base.Reset();
+            locker.FillColor = Color.White;
         }
 
         protected override void DrawResource(RenderTarget target, RenderStates states)
         {
             target.Draw(locker, states);
         }
-
-        protected override void Window_MouseMoved(object sender, MouseMoveEventArgs e)
+        protected override void OnMouseMoved(object sender, MouseMoveEventArgs e)
         {
-            base.Window_MouseMoved(sender, e);
+            if (!IsActive)
+                return;
+
+            base.OnMouseMoved(sender, e);
 
             if (isEntered)
             {
@@ -69,56 +76,66 @@ namespace GameEngine.GUI
                 state = WidgetState.active;
             }
         }
-        protected override void Window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        protected override void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
+            if (!IsActive)
+                return;
+
             if (e.Button == Mouse.Button.Left)
             {
                 if (isEntered)
                 {
                     isLocked = isLocked ? false : true;
 
-                    WidgetEvent(this, new WidgetEventArgs("", Convert.ToInt32(isLocked), isActive));
+                    PressedEvent(this, new WidgetEventArgs("", Convert.ToInt32(isLocked), IsActive));
                 }
             }
-        }
-
-        protected override void Reset()
-        {
-            locker.FillColor = Color.White;
-            rect.FillColor = Color.White;
         }
         protected override void UpdateText()
         {
             text.Origin = new Vector2f(0, text.GetGlobalBounds().Height / 2f);
             text.Position = new Vector2f(locker.GetGlobalBounds().Width + 15f, locker.GetGlobalBounds().Height / 2.5f);
         }
-
         protected override void NotActiveState()
         {
+            text.FillColor = NotActiveTextColor;
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 0, 20, 20);
+            {
+                locker.TextureRect = GetRect(UVoffset, TextureSize, 0, isLocked);
+            }
             else
-                locker.FillColor = isLocked ? Color.Red : new Color(244, 183, 19);
-
-            text.Color = Color.White;
+            {
+                locker.FillColor = isLocked ? Color.Red : NotActiveColor;
+            }
         }
         protected override void ActiveState()
         {
+            text.FillColor = ActiveTextColor;
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 20, 20, 20);
+            {
+                locker.TextureRect = GetRect(UVoffset, TextureSize, 1, isLocked);
+            }
             else
-                locker.FillColor = isLocked ? new Color(22, 192, 82) : new Color(52, 152, 219);
-
-            text.Color = Color.White;
+            {
+                locker.FillColor = isLocked ? ActiveLockedColor : ActiveColor;
+            }
         }
         protected override void SelectedState()
         {
+            text.FillColor = SelectedTextColor;
             if (locker.Texture != null)
-                locker.TextureRect = new IntRect(20 * Convert.ToInt32(isLocked), 40, 20, 20);
+            {
+                locker.TextureRect = GetRect(UVoffset, TextureSize, 2, isLocked);
+            }
             else
-                locker.FillColor = isLocked ? new Color(50, 196, 19) : new Color(45, 107, 236);
+            {
+                locker.FillColor = isLocked ? SelectedLockedColor : SelectedColor;
+            }
+        }
 
-            text.Color = new Color(255, 255, 130);
+        private IntRect GetRect(Vector2i UV, Vector2i size, int number, bool isLocked)
+        {
+            return new IntRect(size.X * Convert.ToInt32(isLocked) + UV.X, size.Y * number + UV.Y, size.X, size.Y);
         }
     }
 }

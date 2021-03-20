@@ -5,19 +5,15 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.Core
 {
     public class Game
     {
         public static RenderWindow Window { get; set; }
-        public static StateMachine Machine { get; private set; }
+        public static StateMachine stateMachine { get; private set; }
 
-        public static readonly string GameName = "\nterraria demo_0.0.5";
+        public static readonly string GameName = "Terraria demo_0.0.5";
         public static bool VisibleCounter = false;
 
         public IConfigurator config;
@@ -25,93 +21,97 @@ namespace GameEngine.Core
 
         public Game(IConfigurator configurator)
         {
-			config = configurator;
-			config.LoadConfiguration();
+            config = configurator;
+            config.LoadConfiguration();
 
-            Machine = new StateMachine();
+            stateMachine = new StateMachine();
 
-            Window = config.FullScreen ? 
-                new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Fullscreen) : 
-				new RenderWindow(new VideoMode(1366, 768), GameName, Styles.Close);
-
+            Window = new RenderWindow(new VideoMode(1366, 768), GameName, config.FullScreen ? Styles.Fullscreen : Styles.Close);
             Window.SetFramerateLimit(60);
 
-            Subscribe();
+            InitEvents();
 
-            counter = new FPSCounter();
-            counter.Text = GameName;
-
-            Machine.PushState(new MainMenuState(this));
-        }
-
-        public void Subscribe()
-        {
-            Window.Closed += Window_Closed;
-            Window.KeyPressed += Window_KeyPressed;
-        }
-
-        private void Window_KeyPressed(object sender, KeyEventArgs e)
-        {
-            if (e.Code == Keyboard.Key.Tab)
+            counter = new FPSCounter()
             {
-                VisibleCounter = VisibleCounter ? false : true;
-            }
-        }
+                Text = GameName
+            };
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            Window.Close();
+            stateMachine.PushState(new MainMenuState(this));
         }
 
         public void Run()
         {
             const uint TPS = 60;
             Time dt = Time.FromSeconds(1.0f / TPS);
-            //uint ticks = 0;
 
             Clock timer = new Clock();
             var lastTime = Time.Zero;
             var accumulator = Time.Zero;
 
-            while (Window.IsOpen && !Machine.Empty)
+            while (Window.IsOpen && !stateMachine.Empty)
             {
-                var state = Machine.CurrentState;
+                var state = stateMachine.CurrentState;
 
                 // get times
                 var time = timer.ElapsedTime;
                 var frameTime = time - lastTime;
-                if (frameTime > Time.FromSeconds(0.25f)) frameTime = Time.FromSeconds(0.25f);
+                if (frameTime > Time.FromSeconds(0.25f))
+                {
+                    frameTime = Time.FromSeconds(0.25f);
+                }
 
                 lastTime = time;
                 accumulator += frameTime;
 
                 // real time update
                 state.HandleInput();
-                counter.Text = GameName + "\ncount states: " + Machine.Count.ToString();
+                counter.Text = $"{GameName} \nCount states: { stateMachine.Count}";
                 counter.Update();
 
                 while (accumulator >= dt)
                 {
-                    //ticks++;
                     // updating with fixed time
                     state.Update(dt);
                     accumulator -= dt;
                 }
 
-                var interpolation = (accumulator / dt).AsSeconds();
-                //State state = currentState * interpolation + previousState * (1.0 - interpolation);
-
+                float interpolation = (accumulator / dt).AsSeconds();
 
                 // render
-                Window.Clear(Color.Black);
-                state.Render(interpolation);
-                if (VisibleCounter)
-                    Window.Draw(counter);
-                Window.Display();
+                Render(state, interpolation);
 
                 Window.DispatchEvents();
-                Machine.TryPop();
+                stateMachine.TryPop();
             }
+        }
+
+        public void InitEvents()
+        {
+            Window.Closed += OnWindowClosed;
+            Window.KeyPressed += OnWindowKeyPressed;
+        }
+        private void Render(StateBase state, float interpolation)
+        {
+            Window.Clear(Color.Black);
+            state.Render(interpolation);
+
+            if (VisibleCounter)
+            {
+                Window.Draw(counter);
+            }
+
+            Window.Display();
+        }
+        private void OnWindowKeyPressed(object sender, KeyEventArgs e)
+        {
+            if (e.Code == Keyboard.Key.Tab)
+            {
+                VisibleCounter = VisibleCounter ? false : true;
+            }
+        }
+        private void OnWindowClosed(object sender, EventArgs e)
+        {
+            Window.Close();
         }
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GameEngine.Event;
 using SFML.Graphics;
 using SFML.System;
@@ -12,13 +8,35 @@ namespace GameEngine.GUI
 {
     public class ScrollBar : Widget
     {
-        public override event EventHandler<WidgetEventArgs> WidgetEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<WidgetEventArgs> ValueChangedEvent = (object sender, WidgetEventArgs e) => { };
 
         public int Value
         {
             get => value;
             set { this.value = value >= maxValue ? maxValue : value; }
         }
+        public override string Text
+        {
+            get => base.Text;
+            set
+            {
+                message = value + " ";
+                UpdateText();
+            }
+        }
+        public override Texture Texture
+        {
+            get => base.Texture;
+            set
+            {
+                bar.Texture = value;
+                rect.Texture = value;
+                UpdateState();
+            }
+        }
+
+        public IntRect ActiveBarRect { get; set; } = new IntRect(0, 20, 8, 20);
+        public IntRect SelectedBarRect { get; set; } = new IntRect(8, 20, 8, 20);
 
         private RectangleShape bar;
         private string message;
@@ -29,9 +47,7 @@ namespace GameEngine.GUI
         private readonly int step;
 
         public ScrollBar() : this("")
-        {
-
-        }
+        {}
         public ScrollBar(string str, int min = 0, int max = 100, int step = 1) : base(WidgetSize.Wide)
         {
             value = min * step;
@@ -39,50 +55,40 @@ namespace GameEngine.GUI
             maxValue = max;
             this.step = step;
 
+            rect.TextureRect = NotActiveRect;
             bar = new RectangleShape()
             {
                 Size = new Vector2f(16, 40),
-                FillColor = new Color(255, 255, 255, 150),
+                FillColor = ActiveColor,
                 OutlineColor = Color.Black,
                 OutlineThickness = outlineThickness
             };
-
             Text = str;
         }
 
-        public override string Text
+        public override void Update()
         {
-            get => base.Text;
-            set
-            {
-                message = value + " ";
-                UpdateText();
-            }
+            base.Update();
+
+            UpdateBar();
+            UpdateText();
         }
-
-        public override Texture Texture
+        public override void Reset()
         {
-            get => base.Texture;
-            set
-            {
-                Reset();
-
-                bar.Texture = value;
-                rect.Texture = value;
-                rect.TextureRect = new IntRect(16, 0, 200, 20);
-
-                UpdateState();
-            }
+            base.Reset();
+            bar.FillColor = Color.White;
         }
 
         protected override void DrawResource(RenderTarget target, RenderStates states)
         {
             target.Draw(bar, states);
         }
-
-        protected override void Window_MouseMoved(object sender, MouseMoveEventArgs e)
+        protected override void OnMouseMoved(object sender, MouseMoveEventArgs e)
         {
-            base.Window_MouseMoved(sender, e);
+			if (!IsActive)
+                return;
+
+            base.OnMouseMoved(sender, e);
 
             if (isEntered)
             {
@@ -96,8 +102,11 @@ namespace GameEngine.GUI
                 }
             }
         }
-        protected override void Window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        protected override void OnMouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
+            if (!IsActive)
+                return;
+
             if (e.Button == Mouse.Button.Left)
             {
                 if (isEntered)
@@ -106,28 +115,25 @@ namespace GameEngine.GUI
                 }
             }
         }
-        protected override void Window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        protected override void OnMouseButtonReleased(object sender, MouseButtonEventArgs e)
         {
+            if (!IsActive)
+                return;
+
             if (e.Button == Mouse.Button.Left)
             {
-                if(isClicked)
+                if (isClicked)
                 {
-                    if(isEntered)
+                    if (isEntered)
                     {
                         state = WidgetState.selected;
                     }
 
-                    WidgetEvent(this, new WidgetEventArgs("", value, isActive));
+                    ValueChangedEvent(this, new WidgetEventArgs("", value, IsActive));
                 }
 
                 isClicked = false;
             }
-        }
-
-        protected override void Reset()
-        {
-            bar.FillColor = Color.White;
-            rect.FillColor = Color.White;
         }
         protected override void UpdateText()
         {
@@ -141,13 +147,31 @@ namespace GameEngine.GUI
                 rect.GetGlobalBounds().Width / 2f,
                 rect.GetGlobalBounds().Height / 2.5f);
         }
-        protected override void UpdateState()
+        protected override void ActiveState()
         {
-            base.UpdateState();
-
-            UpdateBar();
-            UpdateText();
+            text.FillColor = ActiveTextColor;
+            if (bar.Texture != null)
+            {
+                bar.TextureRect = ActiveBarRect;
+            }
+            else
+            {
+                bar.FillColor = ActiveColor;
+            }
         }
+        protected override void SelectedState()
+        {
+            text.FillColor = SelectedTextColor;
+            if (bar.Texture != null)
+            {
+                bar.TextureRect = SelectedBarRect;
+            }
+            else
+            {
+                bar.FillColor = SelectedColor;
+            }
+        }
+
         private void UpdateBar()
         {
             float length = rect.GetGlobalBounds().Width - bar.GetGlobalBounds().Width;
@@ -173,25 +197,6 @@ namespace GameEngine.GUI
             {
                 bar.Position = new Vector2f((value / step - minValue) * length / range, 0);
             }
-        }
-
-        protected override void ActiveState()
-        {
-            if (bar.Texture != null)
-                bar.TextureRect = new IntRect(0, 0, 8, 20);
-            else
-                bar.FillColor = new Color(255, 255, 255, 150);
-
-            text.Color = Color.White;
-        }
-        protected override void SelectedState()
-        {
-            if (bar.Texture != null)
-                bar.TextureRect = new IntRect(8, 0, 8, 20);
-            else
-                bar.FillColor = new Color(45, 107, 236);
-
-            text.Color = new Color(255, 255, 130);
         }
     }
 }

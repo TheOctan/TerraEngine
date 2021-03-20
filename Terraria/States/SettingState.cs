@@ -6,11 +6,6 @@ using GameEngine.States.StateMachine;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.States
 {
@@ -19,21 +14,16 @@ namespace GameEngine.States
         private RectangleShape background;
 
         private StackMenu menu;
-        private ScrollBar bar1;
-        private ScrollBar bar2;
-        private Lock locker;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private Button button1;
-		private Button button2;
+        private ScrollBar musicBar;
+        private ScrollBar soundBar;
+        private Lock fullScreenLocker;
+        private TextBox nickNameTextBox1;
+        private TextBox nickNameTextBox2;
+        private Button resetButton;
+        private Button backButton;
 
         public SettingState(Game game) : base(game)
-        {
-        }
-
-        public override void HandleInput()
-        {
-        }
+        {}
 
         public override void Init()
         {
@@ -41,49 +31,50 @@ namespace GameEngine.States
             background.Size = new Vector2f(Game.Window.Size.X, Game.Window.Size.Y);
             background.Texture = ResourceHolder.Textures.Get("Background/orig");
 
-            bar1 = new ScrollBar("Music");
-            bar1.Texture = ResourceHolder.Textures.Get("Widget/scrollBar");
-            bar1.WidgetEvent += Bar1_WidgetEvent;
-            bar1.Value = game.config.Music;
+            musicBar = new ScrollBar("Music");
+            musicBar.Texture = ResourceHolder.Textures.Get("Widget/scrollBar");
+			musicBar.ValueChangedEvent += OnMusicBarValueChanged;
+            musicBar.Value = game.config.Music;
 
-            bar2 = new ScrollBar("Sound");
-            bar2.Texture = ResourceHolder.Textures.Get("Widget/scrollBar");
-            bar2.WidgetEvent += Bar2_WidgetEvent;
-            bar2.Value = game.config.Value;
+            soundBar = new ScrollBar("Sound");
+            soundBar.Texture = ResourceHolder.Textures.Get("Widget/scrollBar");
+			soundBar.ValueChangedEvent += OnSoundBarValueChanged;
+            soundBar.Value = game.config.Value;
 
-            locker = new Lock("Full screen mode");
-            locker.Texture = ResourceHolder.Textures.Get("Widget/lock");
-            locker.WidgetEvent += Locker1_WidgetEvent;
-            locker.Value = game.config.FullScreen;
+            fullScreenLocker = new Lock("Full screen mode");
+            fullScreenLocker.Texture = ResourceHolder.Textures.Get("Widget/lock");
+			fullScreenLocker.PressedEvent += OnFullscreenPressed;
+            fullScreenLocker.Value = game.config.FullScreen;
 
-            textBox1 = new TextBox(game.config.NickName1);
-            textBox1.Texture = ResourceHolder.Textures.Get("Widget/textBox");
-            textBox1.WidgetEvent += TextBox1_WidgetEvent;
+            nickNameTextBox1 = new TextBox(game.config.NickName1);
+            nickNameTextBox1.Texture = ResourceHolder.Textures.Get("Widget/textBox");
+			nickNameTextBox1.TextChangedEvent += OnNicknameTextChanged1;
 
-            textBox2 = new TextBox(game.config.NickName2);
-            textBox2.Texture = ResourceHolder.Textures.Get("Widget/textBox");
-            textBox2.WidgetEvent += TextBox2_WidgetEvent;
+            nickNameTextBox2 = new TextBox(game.config.NickName2);
+            nickNameTextBox2.Texture = ResourceHolder.Textures.Get("Widget/textBox");
+            nickNameTextBox2.TextChangedEvent += OnNicknameTextChanged2;
+            nickNameTextBox2.SetActive(false);
 
-            button1 = new Button("Back");
-            button1.Texture = ResourceHolder.Textures.Get("Widget/button");
-            button1.WidgetEvent += Button1_WidgetEvent;
+            resetButton = new Button("Reset");
+            resetButton.Texture = ResourceHolder.Textures.Get("Widget/button");
+			resetButton.PressedEvent += OnResetButtonPressed;
 
-			button2 = new Button("Reset");
-			button2.Texture = ResourceHolder.Textures.Get("Widget/button");
-			button2.WidgetEvent += Button2_WidgetEvent;
+            backButton = new Button("Back");
+            backButton.Texture = ResourceHolder.Textures.Get("Widget/button");
+			backButton.PressedEvent += OnBackButtonPressed;            
 
-			menu = new StackMenu();
+            menu = new StackMenu();
             menu.Title = "Settings";
             menu.Texture = ResourceHolder.Textures.Get("Widget/demo_background");
             menu.FillColor = new Color(0, 0, 0, 150);
 
-            menu.AddWidget(bar1);
-            menu.AddWidget(bar2);
-            menu.AddWidget(locker);
-            menu.AddWidget(textBox1);
-            menu.AddWidget(textBox2);
-			menu.AddWidget(button2);
-            menu.AddWidget(button1);
+            menu.AddWidget(musicBar);
+            menu.AddWidget(soundBar);
+            menu.AddWidget(fullScreenLocker);
+            menu.AddWidget(nickNameTextBox1);
+            menu.AddWidget(nickNameTextBox2);
+            menu.AddWidget(resetButton);
+            menu.AddWidget(backButton);
 
             menu.Subscribe();
 
@@ -91,17 +82,17 @@ namespace GameEngine.States
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
-		private void Button2_WidgetEvent(object sender, WidgetEventArgs e)
-		{
-			game.config.ResetConfiguration();
+        private void OnResetButtonPressed(object sender, WidgetEventArgs e)
+        {
+            game.config.ResetConfiguration();
 
-			bar1.Value = game.config.Music;
-			bar2.Value = game.config.Value;
-			textBox1.Text = game.config.NickName1;
-			textBox2.Text = game.config.NickName2;
-		}
+            musicBar.Value = game.config.Music;
+            soundBar.Value = game.config.Value;
+            nickNameTextBox1.Text = game.config.NickName1;
+            nickNameTextBox2.Text = game.config.NickName2;
+        }
 
-		public override void Render(float alpha)
+        public override void Render(float alpha)
         {
             Game.Window.Draw(background);
             Game.Window.Draw(menu);
@@ -112,56 +103,56 @@ namespace GameEngine.States
             menu.Update();
         }
 
-        private void Bar1_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnMusicBarValueChanged(object sender, WidgetEventArgs e)
         {
             game.config.Music = e.Value;
         }
 
-        private void Bar2_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnSoundBarValueChanged(object sender, WidgetEventArgs e)
         {
             game.config.Value = e.Value;
         }
 
-        private void Locker1_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnFullscreenPressed(object sender, WidgetEventArgs e)
         {
-            game.config.FullScreen = locker.Value;
+            game.config.FullScreen = fullScreenLocker.Value;
 
-            if(game.config.FullScreen)
+            if (game.config.FullScreen)
             {
                 Game.Window.Close();
-                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Fullscreen);
+                Game.Window = new RenderWindow(new VideoMode(1366, 768), Game.GameName, Styles.Fullscreen);
                 Game.Window.SetFramerateLimit(60);
 
-                game.Subscribe();
+                game.InitEvents();
                 menu.Subscribe();
             }
             else
             {
                 Game.Window.Close();
-                Game.Window = new RenderWindow(VideoMode.DesktopMode, Game.GameName, Styles.Close);
+                Game.Window = new RenderWindow(new VideoMode(1366, 768), Game.GameName, Styles.Close);
                 Game.Window.SetFramerateLimit(60);
 
-                game.Subscribe();
+                game.InitEvents();
                 menu.Subscribe();
             }
         }
 
-        private void TextBox1_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnNicknameTextChanged1(object sender, WidgetEventArgs e)
         {
             game.config.NickName1 = e.Message;
         }
 
-        private void TextBox2_WidgetEvent(object sender, WidgetEventArgs e)
+        private void OnNicknameTextChanged2(object sender, WidgetEventArgs e)
         {
             game.config.NickName2 = e.Message;
         }
 
-        private void Button1_WidgetEvent(object sender, Event.WidgetEventArgs e)
+        private void OnBackButtonPressed(object sender, Event.WidgetEventArgs e)
         {
             menu.Unsubscribe();
 
-			game.config.SaveConfiguration();
-            Game.Machine.PopState();
+            game.config.SaveConfiguration();
+            Game.stateMachine.PopState();
         }
     }
 }

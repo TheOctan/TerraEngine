@@ -1,9 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameEngine.Core.impl
 {
@@ -15,20 +12,20 @@ namespace GameEngine.Core.impl
 		public string NickName1 { get; set; }
 		public string NickName2 { get; set; }
 
-		public static readonly string rootModule			= @"Software\MyTerraria";
-		public static readonly string settingsModule		= @"Software\MyTerraria\Settings";
+		public static readonly string rootModule = @"Software\MyTerraria";
+		public static readonly string settingsModule = @"Software\MyTerraria\Settings";
 
-		public static readonly string musicSettingKey		= "Music";
-		public static readonly string valueSettingKey		= "Value";
-		public static readonly string fullSreenSettingKey	= "FullScreen";
-		public static readonly string nameSettingKey1		= "PlayerName01";
-		public static readonly string nameSettingKey2		= "PlayerName02";
+		public static readonly string musicSettingKey = "Music";
+		public static readonly string valueSettingKey = "Value";
+		public static readonly string fullSreenSettingKey = "FullScreen";
+		public static readonly string nameSettingKey1 = "PlayerName01";
+		public static readonly string nameSettingKey2 = "PlayerName02";
 
-		public static readonly int defaultMusic			= 100;
-		public static readonly int defaultValue			= 100;
-		public static readonly bool defaultFullScreen	= true;
-		public static readonly string defaultNickName1	= "Player 0";
-		public static readonly string defaultNickName2	= "Player 1";
+		public static readonly int defaultMusic = 100;
+		public static readonly int defaultValue = 100;
+		public static readonly bool defaultFullScreen = true;
+		public static readonly string defaultNickName1 = "Player 0";
+		public static readonly string defaultNickName2 = "Player 1";
 
 		public void LoadConfiguration()
 		{
@@ -47,7 +44,7 @@ namespace GameEngine.Core.impl
 			}
 			catch (Exception)
 			{
-				
+
 			}
 		}
 
@@ -55,8 +52,8 @@ namespace GameEngine.Core.impl
 		{
 			try
 			{
-				RegistryKey currentConfig	= Registry.CurrentUser;
-				RegistryKey settings		= OpenOrCreateSubKey(currentConfig, settingsModule);
+				RegistryKey currentConfig = Registry.CurrentUser;
+				RegistryKey settings = OpenOrCreateSubKey(currentConfig, settingsModule);
 
 				settings.SetValue(musicSettingKey, Music);
 				settings.SetValue(valueSettingKey, Value);
@@ -68,7 +65,7 @@ namespace GameEngine.Core.impl
 			}
 			catch (Exception)
 			{
-				
+
 			}
 		}
 

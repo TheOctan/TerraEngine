@@ -8,7 +8,7 @@ namespace GameEngine.GUI
 {
     public class Lock : Widget
     {
-        public event EventHandler<WidgetEventArgs> PressedEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<LockEventArgs> PressedEvent = (object sender, LockEventArgs e) => { };
 
         public Vector2i UVoffset { get; set; }
         public Vector2i TextureSize { get; set; }
@@ -85,9 +85,9 @@ namespace GameEngine.GUI
             {
                 if (isEntered)
                 {
-                    isLocked = isLocked ? false : true;
+                    isLocked = !isLocked;
 
-                    PressedEvent(this, new WidgetEventArgs("", Convert.ToInt32(isLocked), IsActive));
+                    PressedEvent(this, new LockEventArgs(isLocked));
                 }
             }
         }

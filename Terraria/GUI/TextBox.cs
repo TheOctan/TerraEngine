@@ -10,7 +10,7 @@ namespace GameEngine.GUI
 {
     public class TextBox : Widget
     {
-        public event EventHandler<WidgetEventArgs> TextChangedEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<TextBoxEventArgs> TextChangedEvent = (object sender, TextBoxEventArgs e) => { };
 
         private StringBuilder modString;
 
@@ -58,7 +58,7 @@ namespace GameEngine.GUI
                 else
                 {
                     state = WidgetState.active;
-                    TextChangedEvent(this, new WidgetEventArgs(modString.ToString(), 0, IsActive));
+                    TextChangedEvent(this, new TextBoxEventArgs(modString.ToString()));
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace GameEngine.GUI
                 if (state == WidgetState.selected)
                 {
                     state = WidgetState.active;
-                    TextChangedEvent(this, new WidgetEventArgs(modString.ToString(), 0, IsActive));
+                    TextChangedEvent(this, new TextBoxEventArgs(modString.ToString()));
                 }
             }
         }

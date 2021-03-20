@@ -1,4 +1,5 @@
 ﻿using GameEngine.Core;
+using GameEngine.Event;
 using GameEngine.GUI;
 using GameEngine.Resource;
 using GameEngine.States.StateMachine;
@@ -52,19 +53,19 @@ namespace GameEngine.States
             menu.Position = new Vector2f(Game.Window.Size.X / 2f, Game.Window.Size.Y / 2f);
         }
 
-        private void OnStaterButtonPressed(object sender, Event.WidgetEventArgs e)
+        private void OnStaterButtonPressed(object sender, ButtonEventArgs e)
         {
             menu.Unsubscribe();
 
             Game.stateMachine.ChangeState(new StatePlaying(game));
         }
 
-        private void OnSettingsButtonPressed(object sender, Event.WidgetEventArgs e)
+        private void OnSettingsButtonPressed(object sender, ButtonEventArgs e)
         {
             Game.stateMachine.PushState(new SettingState(game));
         }
 
-        private void OnExitButtonPressed(object sender, Event.WidgetEventArgs e)
+        private void OnExitButtonPressed(object sender, ButtonEventArgs e)
         {
             Game.stateMachine.Reset();
             //Game.Window.Close();

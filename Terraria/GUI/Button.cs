@@ -7,7 +7,7 @@ namespace GameEngine.GUI
 {
     public class Button : Widget
     {
-        public event EventHandler<WidgetEventArgs> PressedEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<ButtonEventArgs> PressedEvent = (object sender, ButtonEventArgs e) => { };
 
         public Button() : this("")
         {}
@@ -64,7 +64,7 @@ namespace GameEngine.GUI
                 {
                     state = WidgetState.selected;
 
-                    PressedEvent(this, new WidgetEventArgs("", 0, IsActive));
+                    PressedEvent(this, ButtonEventArgs.Empty);
                 }
                 isClicked = false;
             }

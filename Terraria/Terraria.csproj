@@ -64,6 +64,10 @@
     <Compile Include="Core\Game.cs" />
     <Compile Include="Core\IConfigurator.cs" />
     <Compile Include="Core\impl\ReestryConfigurator.cs" />
+    <Compile Include="Event\ButtonEventArgs.cs" />
+    <Compile Include="Event\LockEventArgs.cs" />
+    <Compile Include="Event\ScrollBarEventArgs.cs" />
+    <Compile Include="Event\TextBoxEventArgs.cs" />
     <Compile Include="Exceptions\FailLoadLevel.cs" />
     <Compile Include="GUI\Label.cs" />
     <Compile Include="States\PauseState.cs" />
@@ -83,7 +87,6 @@
     <Compile Include="GUI\StackMenu.cs" />
     <Compile Include="GUI\TextBox.cs" />
     <Compile Include="GUI\Widget.cs" />
-    <Compile Include="Event\WidgetEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resource\Content.cs" />

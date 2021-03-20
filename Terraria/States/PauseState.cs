@@ -64,14 +64,14 @@ namespace GameEngine.States
             menu.Update();
         }
 
-        private void OnBackButtonPressed(object sender, WidgetEventArgs e)
+        private void OnBackButtonPressed(object sender, ButtonEventArgs e)
         {
             menu.Unsubscribe();
 
             Game.stateMachine.PopState();
         }
 
-        private void OnRestartButtonPressed(object sender, WidgetEventArgs e)
+        private void OnRestartButtonPressed(object sender, ButtonEventArgs e)
         {
             menu.Unsubscribe();
 
@@ -79,7 +79,7 @@ namespace GameEngine.States
             Game.stateMachine.ChangeState(new StatePlaying(game));
         }
 
-        private void OnMenuButtonPressed(object sender, WidgetEventArgs e)
+        private void OnMenuButtonPressed(object sender, ButtonEventArgs e)
         {
             menu.Unsubscribe();
 

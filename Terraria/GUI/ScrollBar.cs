@@ -8,7 +8,7 @@ namespace GameEngine.GUI
 {
     public class ScrollBar : Widget
     {
-        public event EventHandler<WidgetEventArgs> ValueChangedEvent = (object sender, WidgetEventArgs e) => { };
+        public event EventHandler<ScrollBarEventArgs> ValueChangedEvent = (object sender, ScrollBarEventArgs e) => { };
 
         public int Value
         {
@@ -129,7 +129,7 @@ namespace GameEngine.GUI
                         state = WidgetState.selected;
                     }
 
-                    ValueChangedEvent(this, new WidgetEventArgs("", value, IsActive));
+                    ValueChangedEvent(this, new ScrollBarEventArgs(value));
                 }
 
                 isClicked = false;

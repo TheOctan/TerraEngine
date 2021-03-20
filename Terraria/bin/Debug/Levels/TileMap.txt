@@ -1,0 +1,16 @@
+
+0	Ground			Tiles_0
+1	Grass			Tiles_1
+2	DriedGrass		Tiles_2
+3	Hellstone		Tiles_3
+4	FrozenGrass		Tiles_4
+5	RawGrass		Tiles_5
+6	MarshGrass		Tiles_6
+7	Delta			Delta
+8	Delta2			Delta_2
+9	GeariteBrick		GeariteBrick
+a	Molybdenum		Molybdenum
+b	PermafrostHellstone	PermafrostHellstone	
+c	SampleOre3		SampleOre_3
+d	SampleOre4		SampleOre_4
+e	SoulIce			Soul_Ice
